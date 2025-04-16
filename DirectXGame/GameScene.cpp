@@ -17,7 +17,7 @@ void GameScene::Initialize()
 
 	textureHandle_ = TextureManager::Load("block.png");
 
-	model_ = Model::Create();
+	model_ = Model::Create();//////
 
 
 

@@ -1,6 +1,6 @@
 #pragma once
 #include"KamataEngine.h"
-
+#include"Player.h"
 //ゲームシーン
 class GameScene
 {
@@ -17,6 +17,11 @@ public:
 
 	KamataEngine::WorldTransform worldTransform_;
 	KamataEngine::Camera camera_;
+
+	//自キャラ
+	Player* player_ = nullptr;
+
+
 
     //更新
 	void Update();

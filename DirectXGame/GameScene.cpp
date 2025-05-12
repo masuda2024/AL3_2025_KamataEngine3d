@@ -10,6 +10,7 @@ GameScene::~GameScene()
 	//自キャラの解放
 	delete player_;
 
+	delete skydome_;
 
 	/*
 	for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlocks_)
@@ -40,6 +41,9 @@ void GameScene::Initialize()
 
 	textureHandle_ = TextureManager::Load("block.png");
 
+
+
+
 	model_ = Model::Create();//////
 
 
@@ -53,7 +57,15 @@ void GameScene::Initialize()
 	//自キャラの初期化
 	player_->Initialize( model_,  textureHandle_, &camera_);
 
+
+	//天球の生成
 	
+	modelskydome_ = KamataEngine::Model::CreateFromOBJ("skydome", true);
+	// 天球の初期化
+	skydome_ = new Skydome();
+    skydome_->Initialize(modelskydome_, textureHandle_, &camera_);
+
+
 
 
 	//要素数
@@ -101,6 +113,9 @@ void GameScene::Update()
 {
 	//自キャラの更新
 	player_->Update();
+
+	// 天球の更新
+	skydome_->Update();
 
 
 
@@ -164,8 +179,8 @@ void GameScene::Draw()
 	player_->Draw();
 	//model_->Draw(worldTransform_,camera_,textureHandle_);
 
-
-
+	// 天球の描画
+	skydome_->Draw();
 
 
 	//ブロックの描画

@@ -1,6 +1,7 @@
 #pragma once
 #include"KamataEngine.h"
 #include"Player.h"
+#include"Skydome.h"
 #include"vector"
 //ゲームシーン
 class GameScene
@@ -31,8 +32,9 @@ public:
 
 	//自キャラ
 	Player* player_ = nullptr;
-
-
+	//天球
+	Skydome* skydome_ = nullptr;
+	KamataEngine::Model* modelskydome_ = nullptr;
 
     //更新
 	void Update();

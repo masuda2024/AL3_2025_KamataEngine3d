@@ -76,10 +76,7 @@ void GameScene::Initialize()
 	
 	GenerateBlocks();
 	
-	uint32_t numBlockVirtical = mapChipField_->GetNumBlockVirtical();
-	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();
-
-
+	
 	//要素数
 	//const uint32_t kNumBlockVirtical = 10;
 	//const uint32_t kNumBlockHorizontal = 20;
@@ -92,26 +89,35 @@ void GameScene::Initialize()
 	
 	
 	
-	//要素数を変更する
-	//列数を設定(縦方向のブロック数)
+	
+
+
+
+
+	
+
+	//デバッグカメラの生成
+	debugCamera_ = new DebugCamera(1280, 720);
+
+}
+
+void GameScene::GenerateBlocks() 
+{
+	uint32_t numBlockVirtical = mapChipField_->GetNumBlockVirtical();
+	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();
+
+	// 要素数を変更する
+	// 列数を設定(縦方向のブロック数)
 	worldTransformBlocks_.resize(numBlockVirtical);
-	for (uint32_t i = 0; i < numBlockVirtical; ++i)
-	{
-		//1列の要素数を設定(横方向のブロック数)
+	for (uint32_t i = 0; i < numBlockVirtical; ++i) {
+		// 1列の要素数を設定(横方向のブロック数)
 		worldTransformBlocks_[i].resize(numBlockHorizontal);
 	}
 
-
-
-
-
-	//キューブの生成
-	for (uint32_t i = 0; i < numBlockVirtical; ++i)
-	{
-		for (uint32_t j = 0; j < numBlockHorizontal; ++j)
-		{
-			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kBlock)
-			{
+	// キューブの生成
+	for (uint32_t i = 0; i < numBlockVirtical; ++i) {
+		for (uint32_t j = 0; j < numBlockHorizontal; ++j) {
+			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kBlock) {
 				KamataEngine::WorldTransform* worldTransform = new KamataEngine::WorldTransform();
 				worldTransform->Initialize();
 				worldTransformBlocks_[i][j] = worldTransform;
@@ -124,18 +130,10 @@ void GameScene::Initialize()
 			}
 		}
 	}
-
-	//デバッグカメラの生成
-	debugCamera_ = new DebugCamera(1280, 720);
-
 }
 
-void GameScene::GenerateBlocks() 
+void GameScene::Update()
 {
-
-}
-
-void GameScene::Update() {
 	//自キャラの更新
 	player_->Update();
 

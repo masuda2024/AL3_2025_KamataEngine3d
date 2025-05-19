@@ -1,16 +1,23 @@
 #include"GameScene.h"
 #include"MyMath.h"
+#include"MapChipField.h"
 using namespace KamataEngine;
 
 
 
 GameScene::~GameScene()
 {
+	//モデルの解放
 	delete model_;
+
 	//自キャラの解放
 	delete player_;
 
+	//天球の解放
 	delete skydome_;
+
+	//マップチップフィールドの解放
+	delete mapChipField_;
 
 	/*
 	for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlocks_)
@@ -59,29 +66,39 @@ void GameScene::Initialize()
 
 
 	//天球の生成
-	
 	modelskydome_ = KamataEngine::Model::CreateFromOBJ("skydome", true);
 	// 天球の初期化
 	skydome_ = new Skydome();
     skydome_->Initialize(modelskydome_, textureHandle_, &camera_);
 
-
+	mapChipField_ = new MapChipField;
+	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
+	
+	GenerateBlocks();
+	
+	uint32_t numBlockVirtical = mapChipField_->GetNumBlockVirtical();
+	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();
 
 
 	//要素数
-	const uint32_t kNumBlockVirtical = 10;
-	const uint32_t kNumBlockHorizontal = 20;
+	//const uint32_t kNumBlockVirtical = 10;
+	//const uint32_t kNumBlockHorizontal = 20;
+	
+	
+	
 	//ブロック1個分の横幅
-	const float kBlockWidth = 2.0f;
-	// ブロック1個分の縦幅
-	const float kBlockHeight = 2.0f;
+	//const float kBlockWidth = 2.0f;
+	//const float kBlockHeight = 2.0f;
+	
+	
+	
 	//要素数を変更する
 	//列数を設定(縦方向のブロック数)
-	worldTransformBlocks_.resize(kNumBlockVirtical);
-	for (uint32_t i = 0; i < kNumBlockVirtical; ++i)
+	worldTransformBlocks_.resize(numBlockVirtical);
+	for (uint32_t i = 0; i < numBlockVirtical; ++i)
 	{
 		//1列の要素数を設定(横方向のブロック数)
-		worldTransformBlocks_[i].resize(kNumBlockHorizontal);
+		worldTransformBlocks_[i].resize(numBlockHorizontal);
 	}
 
 
@@ -89,35 +106,41 @@ void GameScene::Initialize()
 
 
 	//キューブの生成
-	for (uint32_t i = 0; i < kNumBlockVirtical; ++i)
+	for (uint32_t i = 0; i < numBlockVirtical; ++i)
 	{
-		for (uint32_t j = 0; j < kNumBlockHorizontal; ++j)
+		for (uint32_t j = 0; j < numBlockHorizontal; ++j)
 		{
-			worldTransformBlocks_[i][j] = new KamataEngine::WorldTransform();
-			worldTransformBlocks_[i][j]->Initialize();
-			worldTransformBlocks_[i][j]->translation_.x = (kBlockWidth+2) * j;
-			worldTransformBlocks_[i][j]->translation_.y = kBlockHeight * i;
+			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kBlock)
+			{
+				KamataEngine::WorldTransform* worldTransform = new KamataEngine::WorldTransform();
+				worldTransform->Initialize();
+				worldTransformBlocks_[i][j] = worldTransform;
+				worldTransformBlocks_[i][j]->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
+
+				// worldTransformBlocks_[i][j] = new KamataEngine::WorldTransform();
+				// worldTransformBlocks_[i][j]->Initialize();
+				// worldTransformBlocks_[i][j]->translation_.x = (kBlockWidth+2) * j;
+				// worldTransformBlocks_[i][j]->translation_.y = kBlockHeight * i;
+			}
 		}
 	}
 
 	//デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
 
+}
 
-
-
+void GameScene::GenerateBlocks() 
+{
 
 }
 
-void GameScene::Update()
-{
+void GameScene::Update() {
 	//自キャラの更新
 	player_->Update();
 
 	// 天球の更新
 	skydome_->Update();
-
-
 
 	//ブロックの更新
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_)

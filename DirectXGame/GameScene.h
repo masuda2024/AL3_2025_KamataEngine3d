@@ -3,6 +3,7 @@
 #include"Player.h"
 #include"Skydome.h"
 #include"vector"
+#include"MapChipField.h"
 //ゲームシーン
 class GameScene
 {
@@ -32,9 +33,17 @@ public:
 
 	//自キャラ
 	Player* player_ = nullptr;
+
 	//天球
 	Skydome* skydome_ = nullptr;
 	KamataEngine::Model* modelskydome_ = nullptr;
+
+	//マップチップフィールド
+	MapChipField* mapChipField_;
+	
+	void GenerateBlocks();
+
+
 
     //更新
 	void Update();

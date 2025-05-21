@@ -9,7 +9,6 @@ void Player::Initialize(KamataEngine::Model* model, uint32_t textureHandle,Kamat
 	//NULLポインタチェック
 	assert(model); 
 
-
 	//引数の内容をメンバ変数に記録
 	camera_ = camera;
 
@@ -18,6 +17,7 @@ void Player::Initialize(KamataEngine::Model* model, uint32_t textureHandle,Kamat
 	textureHandle_ = textureHandle;
 
 	worldTransform_.Initialize();
+
 }
 
 void Player::Update() 

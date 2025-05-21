@@ -1,6 +1,3 @@
-
-
-
 #include"MapChipField.h"
 #include"GameScene.h"
 #include"cassert"

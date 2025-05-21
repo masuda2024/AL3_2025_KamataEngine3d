@@ -7,8 +7,8 @@ using namespace KamataEngine;
 
 GameScene::~GameScene()
 {
-	//モデルの解放
-	delete model_;
+	//モデルの解放(ブロックを並べる)
+	delete modelBlock_;
 
 	//自キャラの解放
 	delete player_;
@@ -27,7 +27,7 @@ GameScene::~GameScene()
     */
 
 
-	
+	//ブロックの解放
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) 
 	{
 		for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockLine) 
@@ -46,13 +46,14 @@ void GameScene::Initialize()
 {
 	
 
+	//textureHandle_ = TextureManager::Load("block.png");
 	textureHandle_ = TextureManager::Load("block.png");
 
 
 
 
-	model_ = Model::Create();//////
-
+	//modelBlock_ = Model::Create(); //////
+	modelBlock_ = Model::CreateFromOBJ("block");
 
 
 	worldTransform_.Initialize();
@@ -62,7 +63,7 @@ void GameScene::Initialize()
 	//自キャラの生成
 	player_ = new Player();
 	//自キャラの初期化
-	player_->Initialize( model_,  textureHandle_, &camera_);
+	player_->Initialize( modelBlock_,  textureHandle_, &camera_);
 
 
 	//天球の生成
@@ -88,13 +89,6 @@ void GameScene::Initialize()
 	//const float kBlockHeight = 2.0f;
 	
 	
-	
-	
-
-
-
-
-	
 
 	//デバッグカメラの生成
 	debugCamera_ = new DebugCamera(1280, 720);
@@ -103,21 +97,26 @@ void GameScene::Initialize()
 
 void GameScene::GenerateBlocks() 
 {
+
 	uint32_t numBlockVirtical = mapChipField_->GetNumBlockVirtical();
 	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();
 
 	// 要素数を変更する
 	// 列数を設定(縦方向のブロック数)
 	worldTransformBlocks_.resize(numBlockVirtical);
-	for (uint32_t i = 0; i < numBlockVirtical; ++i) {
+	for (uint32_t i = 0; i < numBlockVirtical; ++i)
+	{
 		// 1列の要素数を設定(横方向のブロック数)
 		worldTransformBlocks_[i].resize(numBlockHorizontal);
 	}
 
 	// キューブの生成
-	for (uint32_t i = 0; i < numBlockVirtical; ++i) {
-		for (uint32_t j = 0; j < numBlockHorizontal; ++j) {
-			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kBlock) {
+	for (uint32_t i = 0; i < numBlockVirtical; ++i) 
+	{
+		for (uint32_t j = 0; j < numBlockHorizontal; ++j)
+		{
+			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kBlock)
+			{
 				KamataEngine::WorldTransform* worldTransform = new KamataEngine::WorldTransform();
 				worldTransform->Initialize();
 				worldTransformBlocks_[i][j] = worldTransform;
@@ -126,10 +125,13 @@ void GameScene::GenerateBlocks()
 				// worldTransformBlocks_[i][j] = new KamataEngine::WorldTransform();
 				// worldTransformBlocks_[i][j]->Initialize();
 				// worldTransformBlocks_[i][j]->translation_.x = (kBlockWidth+2) * j;
-				// worldTransformBlocks_[i][j]->translation_.y = kBlockHeight * i;
+		     	// worldTransformBlocks_[i][j]->translation_.y = kBlockHeight * i;
 			}
 		}
 	}
+
+
+
 }
 
 void GameScene::Update()
@@ -209,12 +211,12 @@ void GameScene::Draw()
 	{
 		for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockLine)
 		{
-			model_->Draw(*worldTransformBlock, camera_);
+			if (!worldTransformBlock)
+				continue;
+			modelBlock_->Draw(*worldTransformBlock, camera_);
+			
 		}
 	}
-
-
-
 
 
 	Model::PostDraw();

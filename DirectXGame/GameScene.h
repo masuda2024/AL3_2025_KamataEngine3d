@@ -2,7 +2,7 @@
 #include"KamataEngine.h"
 #include"Player.h"
 #include"Skydome.h"
-#include"vector"
+#include<vector>
 #include"MapChipField.h"
 //ゲームシーン
 class GameScene
@@ -16,13 +16,13 @@ public:
 	uint32_t textureHandle_ = 0;
 	
 
-	KamataEngine::Model* model_ = nullptr;
+	KamataEngine::Model* modelBlock_ = nullptr;//modelBlock
 
 	KamataEngine::WorldTransform worldTransform_;
 	KamataEngine::Camera camera_;
 
 
-	
+	//可変個配列
 	std::vector<std::vector<KamataEngine::WorldTransform*>>worldTransformBlocks_;
 
 
@@ -31,8 +31,11 @@ public:
 
 
 
+
 	//自キャラ
 	Player* player_ = nullptr;
+
+
 
 	//天球
 	Skydome* skydome_ = nullptr;

@@ -17,6 +17,12 @@ public:
 	
 
 	KamataEngine::Model* modelBlock_ = nullptr;//modelBlock
+	
+	
+	KamataEngine::Model* modelPlayer_ = nullptr;//Player
+
+	
+
 
 	KamataEngine::WorldTransform worldTransform_;
 	KamataEngine::Camera camera_;
@@ -34,7 +40,7 @@ public:
 
 	//自キャラ
 	Player* player_ = nullptr;
-
+	
 
 
 	//天球

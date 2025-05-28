@@ -10,6 +10,8 @@ GameScene::~GameScene()
 	//モデルの解放(ブロックを並べる)
 	delete modelBlock_;
 
+	delete modelPlayer_;
+
 	//自キャラの解放
 	delete player_;
 
@@ -47,7 +49,7 @@ void GameScene::Initialize()
 	
 
 	//textureHandle_ = TextureManager::Load("block.png");
-	textureHandle_ = TextureManager::Load("block.png");
+	//textureHandle_ = TextureManager::Load("block.png");
 
 
 
@@ -56,14 +58,23 @@ void GameScene::Initialize()
 	modelBlock_ = Model::CreateFromOBJ("block");
 
 
+	//自キャラ
+	modelPlayer_ = Model::CreateFromOBJ("player");
+
+
+
 	worldTransform_.Initialize();
 	camera_.Initialize();
-
+	
 
 	//自キャラの生成
 	player_ = new Player();
 	//自キャラの初期化
-	player_->Initialize( modelBlock_,  textureHandle_, &camera_);
+	
+	
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1,18);
+	//player_->Initialize( modelPlayer_,  textureHandle_, &camera_);
+	player_->Initialize(modelPlayer_,  &camera_,playerPosition);
 
 
 	//天球の生成
@@ -71,6 +82,8 @@ void GameScene::Initialize()
 	// 天球の初期化
 	skydome_ = new Skydome();
     skydome_->Initialize(modelskydome_, textureHandle_, &camera_);
+
+
 
 	mapChipField_ = new MapChipField;
 	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");

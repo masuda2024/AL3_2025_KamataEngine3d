@@ -62,7 +62,7 @@ private:
 	static inline const float kJumpAcceleration = 5.0f;
 
 	
-
+	const KamataEngine::WorldTransform& GetWorldTransform() const { return worldTransform_; }
 
 
 };

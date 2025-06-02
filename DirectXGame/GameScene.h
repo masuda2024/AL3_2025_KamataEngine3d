@@ -4,6 +4,7 @@
 #include"Skydome.h"
 #include<vector>
 #include"MapChipField.h"
+#include"CameraController.h"
 //ゲームシーン
 class GameScene
 {

@@ -32,10 +32,6 @@ void Player::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera
 void Player::Update() 
 { 
 	
-	
-	
-	
-	
 
 	if (Input::GetInstance()->PushKey(DIK_RIGHT)|| Input::GetInstance()->PushKey(DIK_LEFT))
 	{
@@ -184,7 +180,7 @@ void Player::Update()
 	}
 
 
-	//アフィン変換行列の作成
+	//アフィン変換行列の作成(プレイヤーの位置)
 	worldTransform_.matWorld_ = MakeAffinMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 
 

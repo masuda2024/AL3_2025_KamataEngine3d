@@ -9,7 +9,8 @@
 #include<algorithm>
 using namespace KamataEngine;
 using namespace MathUtility;
-void Player::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, KamataEngine::Vector3& position) {
+void Player::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, KamataEngine::Vector3& position) 
+{
 	//NULLポインタチェック
 	assert(model); 
 
@@ -98,7 +99,7 @@ void Player::Update()
 			//落下速度
 			velocity_ += KamataEngine::Vector3(0, -kGravityAcceleration, 0);
 			//落下速度制限
-			//velocity_.y = std::max(velocity_.y, -kLimitFallSpeed);
+			velocity_.y = max(velocity_.y, -kLimitFallSpeed);
 		}
 
 
@@ -153,8 +154,7 @@ void Player::Update()
 		//非入力時は移動減衰をかける
 		velocity_.x *= (1.0f - kAttenuation);
 	}
-/*
-	*/
+    
 	
 
 	if (turnTimer_ > 0.0f)

@@ -1,63 +1,56 @@
 #pragma once
-#include"KamataEngine.h"
-#include"Player.h"
-#include"Skydome.h"
-#include<vector>
-#include"MapChipField.h"
-#include"CameraController.h"
-//ゲームシーン
-class GameScene
+#include "KamataEngine.h"
+#include "MapChipField.h"
+#include "Player.h"
+#include "Skydome.h"
+#include "CameraController.h"
+#include <vector>
+// ゲームシーン
+class GameScene 
 {
 public:
-	//初期化	
-	 
-	~GameScene(); //~はdelete 	
+	// 初期化
+
+	~GameScene(); //~はdelete
 	void Initialize();
 
 	uint32_t textureHandle_ = 0;
-	
 
-	KamataEngine::Model* modelBlock_ = nullptr;//modelBlock
-	
-	
-	KamataEngine::Model* modelPlayer_ = nullptr;//Player
+	KamataEngine::Model* modelBlock_ = nullptr; // modelBlock
 
-	
-
+	KamataEngine::Model* modelPlayer_ = nullptr; // Player
 
 	KamataEngine::WorldTransform worldTransform_;
 	KamataEngine::Camera camera_;
 
-
-	//可変個配列
-	std::vector<std::vector<KamataEngine::WorldTransform*>>worldTransformBlocks_;
-
+	// 可変個配列
+	std::vector<std::vector<KamataEngine::WorldTransform*>> worldTransformBlocks_;
 
 	bool isDebugCameraActive_ = false;
 	KamataEngine::DebugCamera* debugCamera_ = nullptr;
 
-
-
-
-	//自キャラ
+	// 自キャラ
 	Player* player_ = nullptr;
-	
 
-
-	//天球
+	// 天球
 	Skydome* skydome_ = nullptr;
 	KamataEngine::Model* modelskydome_ = nullptr;
 
-	//マップチップフィールド
+	// マップチップフィールド
 	MapChipField* mapChipField_;
-	
+
+
+	//追従カメラ
+	CameraController* cameraController_ = nullptr;
+
+
+
+
 	void GenerateBlocks();
 
-
-
-    //更新
+	// 更新
 	void Update();
 
-	//描画
+	// 描画
 	void Draw();
 };

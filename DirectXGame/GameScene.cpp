@@ -45,6 +45,22 @@ GameScene::~GameScene()
 void GameScene::Initialize()
 {
 
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
 	// textureHandle_ = TextureManager::Load("block.png");
 	// textureHandle_ = TextureManager::Load("block.png");
 
@@ -57,22 +73,39 @@ void GameScene::Initialize()
 	worldTransform_.Initialize();
 	camera_.Initialize();
 
+
+
+
+	//マップチップフィールドの生成
+	mapChipField_ = new MapChipField;
+	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
+
+	GenerateBlocks();
+
+
+
 	// 自キャラの生成
 	player_ = new Player();
 	
 
 
-	//カメラコントローラーの生成
+	player_->SetMapChipField(mapChipField_);
+
+
+
+	
+
+	// カメラコントローラーの生成
 	cameraController_ = new CameraController();
-	//カメラコントローラーの初期化
+	// カメラコントローラーの初期化
 	cameraController_->Initialize();
-	//追従対象をリセット
+	// 追従対象をリセット
 	cameraController_->SetTarget(player_);
-	//リセット(瞬間合わせ)
+	// リセット(瞬間合わせ)
 	cameraController_->Reset();
 
-
-
+	CameraController::Rect cameraArea = {12.0f, 100 - 12.0f, 6.0f, 6.0f};
+	cameraController_->SetMovableArea(cameraArea);
 
 
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
@@ -85,10 +118,7 @@ void GameScene::Initialize()
 	skydome_ = new Skydome();
 	skydome_->Initialize(modelskydome_, textureHandle_, &camera_);
 
-	mapChipField_ = new MapChipField;
-	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
-
-	GenerateBlocks();
+	
 
 	
 
@@ -147,7 +177,7 @@ void GameScene::Update()
 
 
 	//カメラコントローラーの更新
-	cameraController_->Update();
+	//cameraController_->Update();
 
 
 	// 天球の更新

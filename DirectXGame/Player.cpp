@@ -28,16 +28,29 @@ void Player::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera
 	worldTransform_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
 }
 
- 
+
+
 
 void Player::Update() 
 { 
 	
+	//移動入力
+	//InputMove();
 
-	if (Input::GetInstance()->PushKey(DIK_RIGHT)|| Input::GetInstance()->PushKey(DIK_LEFT))
+
+
+	
+
+
+
+	if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT) || Input::GetInstance()->PushKey(DIK_UP))
 	{
 		//左右加速
 		KamataEngine::Vector3 acceleration = {};
+
+
+
+
 
 		if (onGround_)
 		{

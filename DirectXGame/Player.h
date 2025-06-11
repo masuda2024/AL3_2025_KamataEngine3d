@@ -1,5 +1,9 @@
 #pragma once
 #include "KamataEngine.h"
+
+
+
+class MapChipField;
 class Player 
 {
 public:
@@ -9,12 +13,22 @@ public:
 
 	void Draw();
 
+	//void InputMove();
+
+	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
 
 
 	const KamataEngine::WorldTransform& GetWorldTransform() const { return worldTransform_; }
 
 	const KamataEngine::Vector3& GetVelocity() const { return velocity_; }
+
+
+
+	//キャラクターの当たり判定サイズ
+	static inline const float kWidth = 0.8f;
+	static inline const float kHeight = 0.8f;
+
 
 
 private:
@@ -56,11 +70,51 @@ private:
 	bool onGround_ = true;
 
 	// 重力加速度(下方向)
-	static inline const float kGravityAcceleration = 9.8f;
+	static inline const float kGravityAcceleration = 0.1f;
 	// 最大落下速度(下方向)
-	static inline const float kLimitFallSpeed = 10.0f;
+	static inline const float kLimitFallSpeed = 1.0f;
 	// ジャンプ初速(上方向)
-	static inline const float kJumpAcceleration = 5.0f;
+	static inline const float kJumpAcceleration = 1.0f;
 
+
+	//マップチップフィールド
+	MapChipField* mapChipField_ = nullptr;
 	
 };
+
+
+
+/*
+
+
+
+
+
+
+
+
+
+
+
+
+
+//マップチップフィールドの
+
+struct CollisionMapInfo
+{
+    //天井衝突フラグ
+   	bool celling = false;
+	
+	//着地フラグ
+	bool landing = false;
+	
+	//壁接触フラグ
+	bool hitWall = false;
+	
+	//移動量
+	Vector3 move;
+}
+
+
+
+*/

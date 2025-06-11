@@ -60,7 +60,9 @@ public:
 
 	
 	//座標補間割合
-	static inline const float kInterpolationRate = 1.0f;
+	static inline const float kInterpolationRate = 0.1f;
+
+
 
 	//追従対象の各方向へのカメラ移動範囲
 	static inline const Rect targetMaegin = {-9.0f, 9.0f, -5.0f, 5.0f};

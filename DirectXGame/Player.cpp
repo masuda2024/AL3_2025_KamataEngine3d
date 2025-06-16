@@ -37,28 +37,19 @@ void Player::Update()
 	//移動入力
 	//InputMove();
 
-
-
-	
-
-
-
-	if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT) || Input::GetInstance()->PushKey(DIK_UP))
+	if (onGround_)
 	{
 		//左右加速
 		KamataEngine::Vector3 acceleration = {};
 
 
-
-
-
-		if (onGround_)
+		if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_LEFT) || Input::GetInstance()->PushKey(DIK_UP))
 		{
 
 			if (Input::GetInstance()->PushKey(DIK_RIGHT))
 			{
 				// 左移動中の右入力
-				if (velocity_.x < 0.0f) 
+				if (velocity_.x < 0.0f)
 				{
 					// 速度と逆方向に入力中は急ブレーキ
 					velocity_.x *= (1.0f - kAttenuation);
@@ -66,7 +57,7 @@ void Player::Update()
 
 				acceleration.x += kAcceleration;
 
-				if (lrDirection_ != LRDirection::kRight) 
+				if (lrDirection_ != LRDirection::kRight)
 				{
 					lrDirection_ = LRDirection::kRight;
 					// 旋回開始時の角度を記録する
@@ -75,7 +66,7 @@ void Player::Update()
 					turnTimer_ = kTimeTurn;
 				}
 
-			} else if (Input::GetInstance()->PushKey(DIK_LEFT))
+			} else if (Input::GetInstance()->PushKey(DIK_LEFT)) 
 			{
 				// 右移動中の左入力
 				if (velocity_.x > 0.0f) 
@@ -87,7 +78,7 @@ void Player::Update()
 				acceleration.x -= kAcceleration;
 				velocity_.x *= (1.0f - kAcceleration);
 
-				if (lrDirection_ != LRDirection::kLeft) 
+				if (lrDirection_ != LRDirection::kLeft)
 				{
 					lrDirection_ = LRDirection::kLeft;
 					// 旋回開始時の角度を記録する
@@ -97,26 +88,80 @@ void Player::Update()
 				}
 			}
 
-
-			if (Input::GetInstance()->PushKey(DIK_UP))
-			{
-				//ジャンプ加速
-				velocity_ += KamataEngine::Vector3(0, kJumpAcceleration, 0);
-			}
+			
 
 
+			// 加速/減速
+			velocity_ += acceleration;
+
+			// 最大速度制限
+			velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
 
 
-		} else
+		} else 
 		{
-			//落下速度
-			velocity_ += KamataEngine::Vector3(0, -kGravityAcceleration, 0);
-			//落下速度制限
-			velocity_.y = max(velocity_.y, -kLimitFallSpeed);
+			// 非入力時は移動減衰をかける
+			velocity_.x *= (1.0f - kAttenuation);
 		}
 
 
+		if (Input::GetInstance()->PushKey(DIK_UP)) 
+		{
+			// ジャンプ加速
+			velocity_ += KamataEngine::Vector3(0, kJumpAcceleration, 0);
+		}
 
+	}else // 空中
+	{
+		// 落下速度
+		velocity_ += KamataEngine::Vector3(0, -kGravityAcceleration, 0);
+		// 落下速度制限
+		velocity_.y = max(velocity_.y, -kLimitFallSpeed);
+	}
+		
+		
+		
+	// 着地フラグ
+	bool landing = false;
+		// 地面との当たり判定
+		// 下降中？
+	if (velocity_.y < 0) 
+	{
+		// Y座標が地面以下になったら着地
+		if (worldTransform_.translation_.y <= 1.0f) 
+		{
+			landing = true;
+		}
+	}
+
+
+	if (onGround_)
+	{
+		// ジャンプ開始
+		if (velocity_.y > 0.0f)
+		{
+			onGround_ = false;
+		}
+	} else 
+	{
+		// 着地
+		if (landing) 
+		{
+			// めり込み排斥
+			worldTransform_.translation_.y = 1.0f;
+			// 摩擦で横方向速度が減衰する
+			velocity_.x *= (1.0f - kAttenuation);
+			// 下方向速度をリセット
+			velocity_.y = 0.0f;
+			// 設置状態に移行
+			onGround_ = true;
+		}
+	}
+		
+		
+
+
+		/*
 
 		//着地フラグ
 		bool landing = false;
@@ -154,19 +199,11 @@ void Player::Update()
 		}
 
 
+        */
 
 
+		
 
-		//加速/減速
-		velocity_ += acceleration;
-
-		//最大速度制限
-		velocity_.x = std::clamp(velocity_.x, -kLimitRunSpeed, kLimitRunSpeed);
-	} else
-	{
-		//非入力時は移動減衰をかける
-		velocity_.x *= (1.0f - kAttenuation);
-	}
     
 	
 
@@ -175,7 +212,7 @@ void Player::Update()
 		//旋回タイマーを1/60秒だけカウントダウンする
 		turnTimer_ -= 1.0f / 60.0f;
 	
-	    // 左右の自キャラ角度テーブル
+		// 左右の自キャラ角度テーブル
 		float destinationRotationYTable[] =
 		{
 			std::numbers::pi_v<float> / 2.0f,

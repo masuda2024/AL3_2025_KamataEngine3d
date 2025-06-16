@@ -46,21 +46,6 @@ void GameScene::Initialize()
 {
 
 
-
-
-
-	
-
-
-
-
-
-
-
-
-
-
-
 	// textureHandle_ = TextureManager::Load("block.png");
 	// textureHandle_ = TextureManager::Load("block.png");
 
@@ -109,7 +94,7 @@ void GameScene::Initialize()
 
 
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
-	// player_->Initialize( modelPlayer_,  textureHandle_, &camera_);
+	//player_->Initialize( modelPlayer_,  textureHandle_, &camera_);
 	player_->Initialize(modelPlayer_, &camera_, playerPosition);
 
 	// 天球の生成
@@ -177,7 +162,7 @@ void GameScene::Update()
 
 
 	//カメラコントローラーの更新
-	//cameraController_->Update();
+	cameraController_->Update();
 
 
 	// 天球の更新

@@ -56,7 +56,7 @@ public:
 	
 	
 	// 速度掛け率
-	static inline const float kVelocityBias = 30.0f;
+	static inline const float kVelocityBias = 20.0f;
 
 	
 	//座標補間割合

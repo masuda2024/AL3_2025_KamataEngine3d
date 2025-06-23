@@ -13,7 +13,7 @@ public:
 
 	void Draw();
 
-	private:
+private:
 
 		KamataEngine::WorldTransform worldTransform_;
 

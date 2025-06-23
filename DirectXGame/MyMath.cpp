@@ -7,7 +7,7 @@
 using namespace KamataEngine;
 using namespace MathUtility;
 
-KamataEngine::Matrix4x4 MakeAffinMatrix(KamataEngine::Vector3& scale, KamataEngine::Vector3& rotation, KamataEngine::Vector3& translation)
+KamataEngine::Matrix4x4 MakeAffineMatrix(KamataEngine::Vector3& scale, KamataEngine::Vector3& rotation, KamataEngine::Vector3& translation)
 {
 	// スケーリング行列の作成
 	Matrix4x4 matScale = MakeScaleMatrix(scale);

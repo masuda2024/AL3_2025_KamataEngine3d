@@ -6,47 +6,69 @@
 #include "CameraController.h"
 #include <vector>
 // ゲームシーン
-class GameScene 
+
+
+
+
+class GameScene
 {
 public:
-	// 初期化
+	void GenerateBlocks();
 
-	~GameScene(); //~はdelete
+	// 初期化
 	void Initialize();
 
+	std::vector<std::vector<KamataEngine::WorldTransform*>> worldTransformBlocks_; // stdでエラーが起きたらKamataEngine::をいれる
+
+	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 
-	KamataEngine::Model* modelBlock_ = nullptr; // modelBlock
+	// デバックカメラ有効
+	bool isDebugCameraActive_ = false;
 
-	KamataEngine::Model* modelPlayer_ = nullptr; // Player
+	// デバックカメラ
+	KamataEngine::DebugCamera* debugCamera_ = nullptr;
 
+	// デバックカメラの生成
+	// debugCamera_ = new DebugCamera();
+
+	// 3Dモデル
+	KamataEngine::Model* modelskydome_ = nullptr;
+
+	// モデルプレイヤー
+	KamataEngine::Model* modelPlayer_ = nullptr;
+
+	// ワールドトランスフォーム
 	KamataEngine::WorldTransform worldTransform_;
+
+	// カメラ
 	KamataEngine::Camera camera_;
 
-	// 可変個配列
-	std::vector<std::vector<KamataEngine::WorldTransform*>> worldTransformBlocks_;
-
-	bool isDebugCameraActive_ = false;
-	KamataEngine::DebugCamera* debugCamera_ = nullptr;
+	// スプライト
+	KamataEngine::Sprite* sprite_ = nullptr;
 
 	// 自キャラ
 	Player* player_ = nullptr;
 
-	// 天球
+	// キューブ
 	Skydome* skydome_ = nullptr;
-	KamataEngine::Model* modelskydome_ = nullptr;
 
 	// マップチップフィールド
 	MapChipField* mapChipField_;
 
+	// 3Dモデルデータ
+	KamataEngine::Model* model_ = nullptr;
 
-	//追従カメラ
+	// 3D
+	KamataEngine::Model* cube_ = nullptr;
+
+	// カメラコントロール
 	CameraController* cameraController_ = nullptr;
+	// void Initialize();
+	// KamataEngine::Model* cameraModel_;
 
-
-
-
-	void GenerateBlocks();
+	// デストラクタ
+	~GameScene();
 
 	// 更新
 	void Update();

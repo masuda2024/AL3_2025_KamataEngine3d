@@ -5,251 +5,207 @@
 #include "Player.h"
 using namespace KamataEngine;
 
-GameScene::~GameScene() 
-{
-	// モデルの解放(ブロックを並べる)
-	delete modelBlock_;
 
-	delete modelPlayer_;
-
-	// 自キャラの解放
-	delete player_;
-
-	//カメラコントローラーの解放
-	delete cameraController_;
-
-	// 天球の解放
-	delete skydome_;
-
-	// マップチップフィールドの解放
-	delete mapChipField_;
-
-	/*
-	for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlocks_)
-	{
-	    delete worldTransformBlock;
-	}
-	*/
-
-	// ブロックの解放
-	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-		for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockLine) {
-			delete worldTransformBlock;
-		}
-	}
-	worldTransformBlocks_.clear();
-
-	delete debugCamera_;
-}
-
-void GameScene::Initialize()
-{
-
-
-	// textureHandle_ = TextureManager::Load("block.png");
-	// textureHandle_ = TextureManager::Load("block.png");
-
-	// modelBlock_ = Model::Create(); //////
-	modelBlock_ = Model::CreateFromOBJ("block");
-
-	// 自キャラ
-	modelPlayer_ = Model::CreateFromOBJ("player");
-
-	worldTransform_.Initialize();
-	camera_.Initialize();
 
 
 
 
-	//マップチップフィールドの生成
-	mapChipField_ = new MapChipField;
-	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
+void GameScene::Initialize()
+{ // h(ヘッターファイル)にいれる
 
-	GenerateBlocks();
+	// textureHandle_ = TextureManager::Load("Fruuits.png");
 
+	sprite_ = Sprite::Create(textureHandle_, {100, 50});
 
+	modelskydome_ = Model::CreateFromOBJ("skydome", true);
+
+	// デバックカメラの生成
+	debugCamera_ = new DebugCamera(100, 200);
+
+	cube_ = Model::CreateFromOBJ("block");
+
+	// 3Dモデルデータの生成
+	model_ = Model::CreateFromOBJ("player", true);
 
 	// 自キャラの生成
 	player_ = new Player();
-	
+
+	mapChipField_ = new MapChipField;
+
+	// 座標をマップチップ番号で指定
+	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
+	player_->Initialize(model_, &camera_, playerPosition);
+
+	// ワールドトランスフォームの初期化
+	worldTransform_.Initialize();
+
+	// カメラの初期化
+	camera_.Initialize();
+
+	skydome_ = new Skydome();
+
+	// 自キャラの初期化
+	// player_->Initialize(modelPlayer_,&camera_,playerPosition);
+
+	skydome_->Initialize(modelskydome_, textureHandle_, &camera_);
 
 
-	player_->SetMapChipField(mapChipField_);
+	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
+	GenerateBlocks();
 
-
-
-	
-
-	// カメラコントローラーの生成
-	cameraController_ = new CameraController();
-	// カメラコントローラーの初期化
+	// カメラコントローラの初期化
+	cameraController_ = new CameraController;
 	cameraController_->Initialize();
-	// 追従対象をリセット
 	cameraController_->SetTarget(player_);
-	// リセット(瞬間合わせ)
 	cameraController_->Reset();
 
 	CameraController::Rect cameraArea = {12.0f, 100 - 12.0f, 6.0f, 6.0f};
 	cameraController_->SetMovableArea(cameraArea);
 
-
-	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
-	//player_->Initialize( modelPlayer_,  textureHandle_, &camera_);
-	player_->Initialize(modelPlayer_, &camera_, playerPosition);
-
-	// 天球の生成
-	modelskydome_ = KamataEngine::Model::CreateFromOBJ("skydome", true);
-	// 天球の初期化
-	skydome_ = new Skydome();
-	skydome_->Initialize(modelskydome_, textureHandle_, &camera_);
-
-	
-
-	
-
-	// 要素数
-	// const uint32_t kNumBlockVirtical = 10;
-	// const uint32_t kNumBlockHorizontal = 20;
-
-	// ブロック1個分の横幅
-	// const float kBlockWidth = 2.0f;
-	// const float kBlockHeight = 2.0f;
-
-	// デバッグカメラの生成
-	debugCamera_ = new DebugCamera(1280, 720);
+	// マップチップフィールドの生成と初期化
+	// 自キャラの生成と初期化
+	player_->SetMapChipField(mapChipField_);
 }
 
 void GameScene::GenerateBlocks() 
 {
-
+	// 要素数
 	uint32_t numBlockVirtical = mapChipField_->GetNumBlockVirtical();
 	uint32_t numBlockHorizontal = mapChipField_->GetNumBlockHorizontal();
-
+	// ブロック1個分の横幅
+	// const float kBlockWidth = 2.0f;
+	// const float kBlockHeight = 2.0f;
 	// 要素数を変更する
-	// 列数を設定(縦方向のブロック数)
 	worldTransformBlocks_.resize(numBlockVirtical);
-	for (uint32_t i = 0; i < numBlockVirtical; ++i) 
+
+	////キューブの生成
+	for (uint32_t i = 0; i < numBlockVirtical; i++)
 	{
-		// 1列の要素数を設定(横方向のブロック数)
 		worldTransformBlocks_[i].resize(numBlockHorizontal);
 	}
 
-	// キューブの生成
-	for (uint32_t i = 0; i < numBlockVirtical; ++i)
+	// ブロックの生成
+	for (uint32_t i = 0; i < numBlockVirtical; i++)
 	{
-		for (uint32_t j = 0; j < numBlockHorizontal; ++j) 
-		{
-			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kBlock)
+		for (uint32_t j = 0; j < numBlockHorizontal; j++) {
+			if (mapChipField_->GetMapChipTypeByIndex(j, i) == MapChipType::kBlock) // 1マス分にボックスの形にしたいなら(i + j)にする
 			{
-				KamataEngine::WorldTransform* worldTransform = new KamataEngine::WorldTransform();
+				WorldTransform* worldTransform = new WorldTransform();
 				worldTransform->Initialize();
 				worldTransformBlocks_[i][j] = worldTransform;
 				worldTransformBlocks_[i][j]->translation_ = mapChipField_->GetMapChipPositionByIndex(j, i);
-
-				// worldTransformBlocks_[i][j] = new KamataEngine::WorldTransform();
-				// worldTransformBlocks_[i][j]->Initialize();
-				// worldTransformBlocks_[i][j]->translation_.x = (kBlockWidth+2) * j;
-				// worldTransformBlocks_[i][j]->translation_.y = kBlockHeight * i;
 			}
 		}
 	}
 }
 
-void GameScene::Update()
+GameScene::~GameScene() 
+{
+	delete sprite_;
+
+	delete skydome_;
+
+	delete player_;
+
+	// 3Dモデルデータの解放
+	delete model_;
+
+	delete debugCamera_;
+
+	// マップチップフィールドの解放
+	delete mapChipField_;
+
+	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+			delete worldTransformBlock;
+		}
+	}
+	worldTransformBlocks_.clear();
+}
+
+void GameScene::Update() 
 {
 	// 自キャラの更新
 	player_->Update();
-
-
-	//カメラコントローラーの更新
+	// 行列を定義バッファに転送
+	// worldTransform_.TransferMatrix();
 	cameraController_->Update();
 
-
-	// 天球の更新
-	skydome_->Update();
-
 	// ブロックの更新
-	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) 
+	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_)
 	{
-		for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockLine)
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) 
 		{
 
 			if (!worldTransformBlock)
+			{
 				continue;
+			}
 
 			// アフィン変換行列の作成
-			worldTransformBlock->matWorld_ = MakeAffinMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
-			// worldTransformBlock->matWorld_=アフィン変換行列;
 
-			// 定数バッファに転送する
+			worldTransformBlock->matWorld_ = MakeAffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
+
+			////定数バッファに転送する
+
 			worldTransformBlock->TransferMatrix();
 		}
 	}
 
-	// デバッグカメラの更新
-	debugCamera_->Update();
+	// debugCamera_->Update();
+
 #ifdef _DEBUG
-	if (Input::GetInstance()->TriggerKey(DIK_O)) 
+	if (Input::GetInstance()->TriggerKey(DIK_0))
 	{
 		isDebugCameraActive_ = !isDebugCameraActive_;
 	}
-#endif
 
-	// カメラの処理
+#endif // _DEBUG
+
 	if (isDebugCameraActive_)
 	{
+		debugCamera_->Update();
 		camera_.matView = debugCamera_->GetCamera().matView;
 		camera_.matProjection = debugCamera_->GetCamera().matProjection;
-		// ビュープロジェクション行列の転送
 		camera_.TransferMatrix();
 	} else 
 	{
-
-
-		//////////
 		camera_.matView = cameraController_->GetViewProjection().matView;
 		camera_.matProjection = cameraController_->GetViewProjection().matProjection;
-		//////////
-
-
 		// ビュープロジェクション行列の更新と転送
-		//camera_.UpdateMatrix();
 		camera_.TransferMatrix();
 	}
-
-
-	CameraController::Rect cameraArea = {12.0f, 100 - 12.0f, 6.0f, 6.0f};
-	cameraController_->SetMovableArea(cameraArea);
-
-
-
 }
 
-
-void GameScene::Draw() 
+void GameScene::Draw()
 {
 
+	// DirectXCommonインスタンスの取得
 	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
 
 	Model::PreDraw(dxCommon->GetCommandList());
 
+	// 3Dモデル描画
+	//
+	// model_->Draw(worldTransform_, camera_, textureHandle_);
+
 	// 自キャラの描画
 	player_->Draw();
-	// model_->Draw(worldTransform_,camera_,textureHandle_);
 
-	// 天球の描画
-	skydome_->Draw();
-
-	// ブロックの描画
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_)
 	{
-		for (KamataEngine::WorldTransform* worldTransformBlock : worldTransformBlockLine) 
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine)
 		{
 			if (!worldTransformBlock)
+			{
 				continue;
-			modelBlock_->Draw(*worldTransformBlock, camera_);
+			}
+			cube_->Draw(*worldTransformBlock, camera_);
 		}
 	}
 
-	Model::PostDraw();
+	skydome_->Draw();
+
+	// 3Dモデル描画前処理
+	Model::PostDraw(); // プログラムの終了
 }

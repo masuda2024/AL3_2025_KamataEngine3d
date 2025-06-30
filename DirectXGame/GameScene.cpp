@@ -15,43 +15,84 @@ void GameScene::Initialize()
 
 	// textureHandle_ = TextureManager::Load("Fruuits.png");
 
+
+
+
+
+
 	sprite_ = Sprite::Create(textureHandle_, {100, 50});
 
+	// 3Dモデルの生成
 	modelskydome_ = Model::CreateFromOBJ("skydome", true);
 
 	// デバックカメラの生成
 	debugCamera_ = new DebugCamera(100, 200);
+	
 
 	cube_ = Model::CreateFromOBJ("block");
 
 	// 3Dモデルデータの生成
 	model_ = Model::CreateFromOBJ("player", true);
 
+
+
+
 	// 自キャラの生成
 	player_ = new Player();
 
 	mapChipField_ = new MapChipField;
 
+
+	
 	// 座標をマップチップ番号で指定
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
 	player_->Initialize(model_, &camera_, playerPosition);
+	player_->SetMapChipField(mapChipField_); // 自キャラの生成と初期化
+	
 
+	
+
+	
 	// ワールドトランスフォームの初期化
 	worldTransform_.Initialize();
 
+
+
+	
 	// カメラの初期化
 	camera_.Initialize();
 
+	// スカイドームの生成
 	skydome_ = new Skydome();
+
+	// スカイドームの初期化
+	skydome_->Initialize(modelskydome_, textureHandle_, &camera_);
+
+
+
+
+
+
+
+
+	
+	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
+	//表示ブロックの生成
+	GenerateBlocks();
+	
+	
+	
+	
+	
+
+	
+	
 
 	// 自キャラの初期化
 	// player_->Initialize(modelPlayer_,&camera_,playerPosition);
 
-	skydome_->Initialize(modelskydome_, textureHandle_, &camera_);
-
-
-	mapChipField_->LoadMapChipCsv("Resources/blocks.csv");
-	GenerateBlocks();
+	
+	
 
 	// カメラコントローラの初期化
 	cameraController_ = new CameraController;
@@ -63,8 +104,16 @@ void GameScene::Initialize()
 	cameraController_->SetMovableArea(cameraArea);
 
 	// マップチップフィールドの生成と初期化
-	// 自キャラの生成と初期化
-	player_->SetMapChipField(mapChipField_);
+
+
+
+
+
+
+
+
+
+	
 }
 
 void GameScene::GenerateBlocks() 
@@ -115,8 +164,10 @@ GameScene::~GameScene()
 	// マップチップフィールドの解放
 	delete mapChipField_;
 
-	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) {
-		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) {
+	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_) 
+	{
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine) 
+		{
 			delete worldTransformBlock;
 		}
 	}

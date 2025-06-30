@@ -10,6 +10,11 @@ public:
 	void Initialize();
 	
 	
+	void Update();
+
+
+
+	void Reset();
 	
 	Player* target_ = nullptr;
 
@@ -22,12 +27,6 @@ public:
 
 	
 
-	void Update();
-
-	
-	
-	
-	void Reset();
 
 
 

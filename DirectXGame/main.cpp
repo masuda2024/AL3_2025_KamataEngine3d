@@ -4,6 +4,9 @@
 
 using namespace KamataEngine;
 
+// DirectXCommonインスタンスの取得
+DirectXCommon* dxCommon = DirectXCommon::GetInstance();
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) 
 {
@@ -18,9 +21,6 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 
 	
 	
-	//DirectXCommonインスタンスの取得
-	DirectXCommon* dxCommon = DirectXCommon::GetInstance();
-
 	while (true)
 	{
 		//エンジンの更新
@@ -42,13 +42,17 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 		//描画終了
 		dxCommon->PostDraw();
 
+
+
+
+
 	}
 
-	//ゲームシーンの解放
+	
+		// ゲームシーンの解放
 	delete gameScene;
-	//nullptrの代入
+	// nullptrの代入
 	gameScene = nullptr;
-
 
 
 

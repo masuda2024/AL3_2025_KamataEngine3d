@@ -3,6 +3,7 @@
 #include "MyMath.h"
 #include "CameraController.h"
 #include "Player.h"
+#include "Enemy.h"
 using namespace KamataEngine;
 
 
@@ -32,22 +33,37 @@ void GameScene::Initialize()
 	cube_ = Model::CreateFromOBJ("block");
 
 	// 3Dモデルデータの生成
-	model_ = Model::CreateFromOBJ("player", true);
+	modelPlayer_ = Model::CreateFromOBJ("player", true);
 
+
+	
 
 
 
 	// 自キャラの生成
 	player_ = new Player();
+	
+	
+	
+	
+	// 敵の生成
+	enemy_ = new Enemy();
+	// 敵の3Dモデルデータの生成
+	model_ = Model::CreateFromOBJ("enemy", true);
+
 
 	mapChipField_ = new MapChipField;
 
 
-	
 	// 座標をマップチップ番号で指定
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
-	player_->Initialize(model_, &camera_, playerPosition);
+	player_->Initialize(modelPlayer_, &camera_, playerPosition);
 	player_->SetMapChipField(mapChipField_); // 自キャラの生成と初期化
+	
+	// 座標をマップチップ番号で指定
+	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(32, 18);
+	enemy_->Initialize(model_, &camera_, enemyPosition);
+	enemy_->SetMapChipField(mapChipField_); // 敵の生成と初期化
 	
 
 	
@@ -106,14 +122,6 @@ void GameScene::Initialize()
 	// マップチップフィールドの生成と初期化
 
 
-
-
-
-
-
-
-
-	
 }
 
 void GameScene::GenerateBlocks() 
@@ -156,6 +164,11 @@ GameScene::~GameScene()
 
 	delete player_;
 
+
+
+	delete enemy_;
+
+
 	// 3Dモデルデータの解放
 	delete model_;
 
@@ -174,13 +187,31 @@ GameScene::~GameScene()
 	worldTransformBlocks_.clear();
 }
 
+
+
+
+
+
 void GameScene::Update() 
 {
+
 	// 自キャラの更新
 	player_->Update();
 	// 行列を定義バッファに転送
 	// worldTransform_.TransferMatrix();
 	cameraController_->Update();
+
+
+
+
+
+	// 敵の更新
+	enemy_->Update();
+
+
+
+
+
 
 	// ブロックの更新
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_)
@@ -228,6 +259,15 @@ void GameScene::Update()
 	}
 }
 
+
+
+
+
+
+
+
+
+
 void GameScene::Draw()
 {
 
@@ -242,6 +282,13 @@ void GameScene::Draw()
 
 	// 自キャラの描画
 	player_->Draw();
+
+
+	// 敵の描画
+	enemy_->Draw();
+
+
+
 
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_)
 	{

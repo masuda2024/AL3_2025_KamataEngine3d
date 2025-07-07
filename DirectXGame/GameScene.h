@@ -2,6 +2,7 @@
 #include "KamataEngine.h"
 #include "MapChipField.h"
 #include "Player.h"
+#include "Enemy.h"
 #include "Skydome.h"
 #include "CameraController.h"
 #include <vector>
@@ -49,6 +50,16 @@ public:
 
 	// 自キャラ
 	Player* player_ = nullptr;
+
+
+
+
+	//敵
+	Enemy* enemy_ = nullptr;
+
+
+
+
 
 	// キューブ
 	Skydome* skydome_ = nullptr;

@@ -1,14 +1,21 @@
 #pragma once
-#include "KamataEngine.h"
+#include"KamataEngine.h"
+
 
 
 
 class MapChipField;
 
-class Player 
+
+class Enemy
 {
 public:
-	// キャラクターの当たり判定サイズ
+
+
+
+
+	/**/
+	// 敵の当たり判定サイズ
 	static inline const float kWidth = 0.8f;
 	static inline const float kHeight = 0.8f;
 
@@ -18,7 +25,7 @@ public:
 	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 
 	// マップとの当たり判定情報
-	struct CollisionMapInfo 
+	struct CollisionMapInfo
 	{
 		bool ceiling = false;            // 天井衝突フラグ
 		bool langing = false;            // 着地フラグ
@@ -26,6 +33,9 @@ public:
 		KamataEngine::Vector3 move = {}; // 移動量
 	};
 
+
+
+	/*
 	void CheckMapCollision(CollisionMapInfo& info);
 	void CheckMapCollisionUP(CollisionMapInfo& info);    // 上方向
 	void CheckMapCollisionDown(CollisionMapInfo& info);  // 下方向
@@ -40,67 +50,36 @@ public:
 	// 6.接地状態の切り替え
 	void CheckMapLanding(const CollisionMapInfo& info);
 	// 着地フラグ
+*/
+	
 
 	
-	// 角
-	enum Corner 
-	{
-		kRightBottom, // 右下
-		kLeftBottom,  // 左下
-		kRightTop,    // 右上
-		kLeftTop,     // 左上
 
-		kNumCorner // 要素数
+	// 歩行の速さ
+	static inline const float kWalkSpeed = 0.04f;
 
-	};
+	// 最初の角度[度]
+	static inline const float kWalkMotionAngleStart = 5.0f;
+	
+	// 最後の角度[度]
+	static inline const float kWalkMotionAngleEnd = 5.0f;
+	
+	// アニメーションの周期となる時間[秒]
+	static inline const float kWalkMotionTime = 5.0f;
 
-	KamataEngine::Vector3 CornerPosition(const KamataEngine::Vector3& center, Corner corner);
+	// 経過時間
+	float walkTimer_ = 0.0f;
 
-	static inline const float kAccleration = 0.1f;
 
-	static inline const float kAttenuation = 0.1f;
+	
+	
 
-	static inline const float kLimitRunSpeed = 0.5f;
 
-	// 重力加速度(下方向)
-	static inline const float kGravityAcceleration = 0.1f;
-	// 最大落下速度(下方向)
-	static inline const float kLimitFallSpeed = 0.8f;
-	// ジャンプ初速(上方向)
-	static inline const float kJumpAcceleration = 0.8f;
-	// 着地時の速度減衰率
-	static inline const float kAttenuationLanding = 0.9f;
-	// 微小な数値
-	static inline const float kGroundSearchHeight = 0.1f;
-	// 着地時の速度減衰率
-	static inline const float kAttenuationWall = 0.9f;
-
-	// 左右
-	enum class LRDirection
-	{
-		kRight,
-		kLeft,
-	};
-
-	// 旋回開始時の角度
-	float trunFirstRotationY_ = 0.0f;
-	// 旋回タイマー
-	float trunTimer_ = 0.0f;
-	// 旋回時間<秒>
-	static inline const float kTimeTurn = 0.3f;
-	// 接地状態フラグ
-	bool onGround_ = true;
-
-	LRDirection lrDirection_ = LRDirection::kRight;
-
-	const KamataEngine::WorldTransform& GetWorldTransform() const { return worldTransform_; }
-
-	const KamataEngine::Vector3& GetVelocity() const { return velocity_; }
 
 	// 初期化
 	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, KamataEngine::Vector3& position);
 
-	void InputMove();
+	
 
 	// 更新
 	void Update();
@@ -108,9 +87,9 @@ public:
 	// 描画
 	void Draw();
 
-	static inline const float kBlank = 0.9f;
+	
 
-	void AnimateTurn();
+	
 
 private:
 	// ワールド変換データ
@@ -123,4 +102,6 @@ private:
 	KamataEngine::Model* model_;
 
 	KamataEngine::Vector3 velocity_ = {};
+
+
 };

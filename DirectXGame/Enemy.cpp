@@ -33,7 +33,7 @@ void Enemy::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& posi
 	walkTimer_ = 0.0f;
 
 
-	worldTransform_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
+	worldTransform_.rotation_.y = std::numbers::pi_v<float> / -2.0f;
 
 	worldTransform_.Initialize();
 }

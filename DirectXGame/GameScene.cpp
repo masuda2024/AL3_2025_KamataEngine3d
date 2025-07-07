@@ -36,20 +36,47 @@ void GameScene::Initialize()
 	modelPlayer_ = Model::CreateFromOBJ("player", true);
 
 
-	
+	// 敵の3Dモデルデータの生成
+	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
+
 
 
 
 	// 自キャラの生成
 	player_ = new Player();
 	
-	
-	
-	
 	// 敵の生成
 	enemy_ = new Enemy();
-	// 敵の3Dモデルデータの生成
-	model_ = Model::CreateFromOBJ("enemy", true);
+	
+	
+	/*
+	for (int32_t i = 0; i < 3; i++)
+	{
+		Enemy* newEnemy = new Enemy();
+		KamataEngine::Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(1, 18 + i); 
+	    newEnemy->Initialize(enem_, &camera_, enemyPosition);
+	
+	
+	
+	}
+    */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 	mapChipField_ = new MapChipField;
@@ -62,7 +89,7 @@ void GameScene::Initialize()
 	
 	// 座標をマップチップ番号で指定
 	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(32, 18);
-	enemy_->Initialize(model_, &camera_, enemyPosition);
+	enemy_->Initialize(modelEnemy_, &camera_, enemyPosition);
 	enemy_->SetMapChipField(mapChipField_); // 敵の生成と初期化
 	
 

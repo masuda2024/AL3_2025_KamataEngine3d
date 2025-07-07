@@ -39,6 +39,9 @@ public:
 	// モデルプレイヤー
 	KamataEngine::Model* modelPlayer_ = nullptr;
 
+	KamataEngine::Model* modelEnemy_ = nullptr;
+
+
 	// ワールドトランスフォーム
 	KamataEngine::WorldTransform worldTransform_;
 
@@ -51,12 +54,9 @@ public:
 	// 自キャラ
 	Player* player_ = nullptr;
 
-
-
-
 	//敵
 	Enemy* enemy_ = nullptr;
-
+	//std::list<Enemy*> enemies_;
 
 
 

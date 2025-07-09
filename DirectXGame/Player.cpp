@@ -4,7 +4,7 @@
 #include"cassert"
 #include<numbers>
 #include<algorithm>
-#include"MyMath.h"
+
 #define NOMINMAX
 #include<algorithm>
 #include"MapChipField.h"
@@ -15,8 +15,12 @@ using namespace MathUtility;
 
 
 
-void Player::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& position)
-{
+
+
+
+
+
+void Player::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& position) {
 	// NULLポイントチェック
 	assert(model);
 
@@ -502,4 +506,40 @@ KamataEngine::Vector3 Player::CornerPosition(const KamataEngine::Vector3& center
 	};
 
 	return center + offsetTable[static_cast<uint32_t>(corner)];
+}
+
+
+
+
+
+KamataEngine::Vector3 Player::GetWorldPosition()
+{
+	// ワールド座標を入れる変数
+	KamataEngine::Vector3 worldPos;
+	// ワールド行列の平行移動成分を取得(ワールド座標)
+	worldPos.x = worldTransform_.matWorld_.m[3][0];
+	worldPos.y = worldTransform_.matWorld_.m[3][1];
+	worldPos.z = worldTransform_.matWorld_.m[3][2];
+
+	return worldPos;
+}
+
+AABB Player::GetAABB() 
+{
+	KamataEngine::Vector3 worldPos = GetWorldPosition();
+
+	AABB aabb;
+
+	aabb.min = {worldPos.x - kWidth / 2.0f, worldPos.y - kHeight / 2.0f, worldPos.z - kWidth / 2.0f};
+	aabb.max = {worldPos.x + kWidth / 2.0f, worldPos.y + kHeight / 2.0f, worldPos.z + kWidth / 2.0f};
+
+	return aabb;
+}
+
+// 衝突応答
+void Player::OnCollition(const Enemy* enemy)
+{
+	(void)enemy;
+	// ジャンプ開始
+	velocity_ += KamataEngine::Vector3(0, kJumpAcceleration, 0);
 }

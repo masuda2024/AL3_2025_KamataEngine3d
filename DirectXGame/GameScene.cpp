@@ -46,20 +46,20 @@ void GameScene::Initialize()
 	player_ = new Player();
 	
 	// 敵の生成
-	enemy_ = new Enemy();
+	//enemy_ = new Enemy();
 	
 	
-	/*
+	/**/
 	for (int32_t i = 0; i < 3; i++)
 	{
 		Enemy* newEnemy = new Enemy();
-		KamataEngine::Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(1, 18 + i); 
-	    newEnemy->Initialize(enem_, &camera_, enemyPosition);
+		KamataEngine::Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(32 + i, 16 + i);
+	    newEnemy->Initialize(modelEnemy_, &camera_, enemyPosition);
 	
 	
-	
+	    enemies_.push_back(newEnemy);
 	}
-    */
+    
 
 
 
@@ -88,9 +88,9 @@ void GameScene::Initialize()
 	player_->SetMapChipField(mapChipField_); // 自キャラの生成と初期化
 	
 	// 座標をマップチップ番号で指定
-	Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(32, 18);
-	enemy_->Initialize(modelEnemy_, &camera_, enemyPosition);
-	enemy_->SetMapChipField(mapChipField_); // 敵の生成と初期化
+	//Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(32, 18);
+	//enemies_->Initialize(modelEnemy_, &camera_, enemyPosition);
+	//enemies_->SetMapChipField(mapChipField_); // 敵の生成と初期化
 	
 
 	
@@ -151,6 +151,11 @@ void GameScene::Initialize()
 
 }
 
+
+
+
+
+
 void GameScene::GenerateBlocks() 
 {
 	// 要素数
@@ -191,10 +196,12 @@ GameScene::~GameScene()
 
 	delete player_;
 
+	for (Enemy* enemy : enemies_)
+	{
+		delete enemy;
+	}
 
-
-	delete enemy_;
-
+	//delete enemy_;
 
 	// 3Dモデルデータの解放
 	delete model_;
@@ -233,8 +240,13 @@ void GameScene::Update()
 
 
 	// 敵の更新
-	enemy_->Update();
-
+	//enemy_->Update();
+	
+	
+	for (Enemy* enemy : enemies_)
+	{
+		enemy->Update();
+	}
 
 
 
@@ -284,6 +296,10 @@ void GameScene::Update()
 		// ビュープロジェクション行列の更新と転送
 		camera_.TransferMatrix();
 	}
+
+
+	CheckAllCollisions();
+	
 }
 
 
@@ -312,9 +328,12 @@ void GameScene::Draw()
 
 
 	// 敵の描画
-	enemy_->Draw();
+	//enemy_->Draw();
 
-
+	for (Enemy* enemy : enemies_)
+	{
+		enemy->Draw();
+	}
 
 
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_)
@@ -333,4 +352,40 @@ void GameScene::Draw()
 
 	// 3Dモデル描画前処理
 	Model::PostDraw(); // プログラムの終了
+}
+
+
+void GameScene::CheckAllCollisions()
+{
+
+
+#pragma region 自キャラと敵キャラの当たり判定
+	
+	//判定対象1と2の座標
+	AABB aabb1, aabb2;
+	
+	//自キャラと敵弾全ての当たり判定
+	for (Enemy* enemy : enemies_)
+	{
+		//敵弾の座標
+		aabb2 = enemy->GetAABB();
+
+		//AABB同士の交差判定
+		if (IsCollition(aabb1, aabb2))
+		{
+			//自キャラの衝突時関数を呼び出す
+			player_->OnCollition(enemy);
+			//敵の衝突時関数を呼び出す
+			enemy->OnCollition(player_);
+		}
+	}
+
+
+
+
+#pragma endregion
+
+
+
+
 }

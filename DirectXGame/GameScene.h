@@ -19,6 +19,10 @@ public:
 	// 初期化
 	void Initialize();
 
+
+	void CheckAllCollisions();
+
+
 	std::vector<std::vector<KamataEngine::WorldTransform*>> worldTransformBlocks_; // stdでエラーが起きたらKamataEngine::をいれる
 
 	// テクスチャハンドル
@@ -55,8 +59,8 @@ public:
 	Player* player_ = nullptr;
 
 	//敵
-	Enemy* enemy_ = nullptr;
-	//std::list<Enemy*> enemies_;
+	//Enemy* enemy_ = nullptr;
+	std::list<Enemy*> enemies_;
 
 
 

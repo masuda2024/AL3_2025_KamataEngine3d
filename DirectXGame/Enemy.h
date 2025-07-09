@@ -1,11 +1,11 @@
 #pragma once
 #include"KamataEngine.h"
-
+#include"MyMath.h"
 
 
 
 class MapChipField;
-
+class Player;
 
 class Enemy
 {
@@ -71,8 +71,19 @@ public:
 	float walkTimer_ = 0.0f;
 
 
-	
-	
+
+
+
+
+	// ワールド座標を取得
+	KamataEngine::Vector3 GetWorldPosition();
+	// AABBを取得
+	AABB GetAABB();
+	//衝突応答
+	void OnCollition(const Player* player);
+
+
+
 
 
 

@@ -125,11 +125,13 @@ public:
 private:
 	// ワールド変換データ
 	KamataEngine::WorldTransform worldTransform_;
-	// モデル
+	
+	// カメラ
 	KamataEngine::Camera* camera_;
 	// テクスチャハンドル
 	// uint32_t textureHandle_ = 0u;
-
+	
+	// モデル
 	KamataEngine::Model* model_;
 
 	KamataEngine::Vector3 velocity_ = {};

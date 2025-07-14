@@ -5,6 +5,7 @@
 #include "Enemy.h"
 #include "Skydome.h"
 #include "CameraController.h"
+#include "DeathParticle.h"
 #include <vector>
 // ゲームシーン
 
@@ -42,8 +43,16 @@ public:
 
 	// モデルプレイヤー
 	KamataEngine::Model* modelPlayer_ = nullptr;
-
+	
+	//敵
 	KamataEngine::Model* modelEnemy_ = nullptr;
+	
+	//パーティクル
+	KamataEngine::Model* modelParticle_ = nullptr;
+
+
+
+
 
 
 	// ワールドトランスフォーム
@@ -57,6 +66,14 @@ public:
 
 	// 自キャラ
 	Player* player_ = nullptr;
+
+
+
+	//モデルパーティクル
+	DeathParticle* deathParticles_ = nullptr;
+
+	
+
 
 	//敵
 	//Enemy* enemy_ = nullptr;

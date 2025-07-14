@@ -40,6 +40,10 @@ void GameScene::Initialize()
 	modelEnemy_ = Model::CreateFromOBJ("enemy", true);
 
 
+	//パーティクルの3Dモデルデータの生成
+	modelParticle_ = Model::CreateFromOBJ("deathParticle", true);
+
+
 
 
 	// 自キャラの生成
@@ -62,8 +66,7 @@ void GameScene::Initialize()
     
 
 
-
-
+	
 
 
 
@@ -87,13 +90,16 @@ void GameScene::Initialize()
 	player_->Initialize(modelPlayer_, &camera_, playerPosition);
 	player_->SetMapChipField(mapChipField_); // 自キャラの生成と初期化
 	
-	// 座標をマップチップ番号で指定
-	//Vector3 enemyPosition = mapChipField_->GetMapChipPositionByIndex(32, 18);
-	//enemies_->Initialize(modelEnemy_, &camera_, enemyPosition);
-	//enemies_->SetMapChipField(mapChipField_); // 敵の生成と初期化
 	
 
 	
+	// パーティクル
+	deathParticles_ = new DeathParticle();
+	deathParticles_->Initialize(modelParticle_, &camera_, playerPosition);
+	
+
+
+
 
 	
 	// ワールドトランスフォームの初期化
@@ -196,6 +202,8 @@ GameScene::~GameScene()
 
 	delete player_;
 
+	delete deathParticles_;
+
 	for (Enemy* enemy : enemies_)
 	{
 		delete enemy;
@@ -235,8 +243,8 @@ void GameScene::Update()
 	// worldTransform_.TransferMatrix();
 	cameraController_->Update();
 
-
-
+	//パーティクル
+	deathParticles_->Update();
 
 
 	// 敵の更新
@@ -247,6 +255,13 @@ void GameScene::Update()
 	{
 		enemy->Update();
 	}
+
+
+	if ("deathParticle", true)
+	{
+		deathParticles_->Update();
+	}
+
 
 
 
@@ -325,7 +340,12 @@ void GameScene::Draw()
 
 	// 自キャラの描画
 	player_->Draw();
-
+	
+	//パーティクル
+	if ("deathParticle", true) 
+	{
+		deathParticles_->Draw();
+	}
 
 	// 敵の描画
 	//enemy_->Draw();

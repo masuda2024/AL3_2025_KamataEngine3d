@@ -8,6 +8,14 @@ class Enemy;
 class Player 
 {
 public:
+
+
+	//デスフラグ
+	bool isDead_ = false;
+	// デスフラグのgetter
+	bool IsDead() const { return isDead_; }
+
+
 	// キャラクターの当たり判定サイズ
 	static inline const float kWidth = 0.8f;
 	static inline const float kHeight = 0.8f;
@@ -96,6 +104,10 @@ public:
 	const KamataEngine::WorldTransform& GetWorldTransform() const { return worldTransform_; }
 
 	const KamataEngine::Vector3& GetVelocity() const { return velocity_; }
+
+
+	 
+
 
 	//ワールド座標を取得
 	KamataEngine::Vector3 GetWorldPosition();

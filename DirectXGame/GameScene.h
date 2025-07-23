@@ -15,13 +15,36 @@
 class GameScene
 {
 public:
+
+
+	// 終了フラグ
+	bool finished_ = false;
+	// デスフラグのgetter
+	bool IsFinished() const { return finished_; }
+
+
+
 	void GenerateBlocks();
 
 	// 初期化
 	void Initialize();
 
-
+	//全ての当たり判定
 	void CheckAllCollisions();
+
+	//フェーズの切り替え
+	void ChangePhase();
+
+
+	//ゲームのフェーズ(型)
+	enum class Phase
+	{ 
+		kPlay,  //ゲームプレイ
+		kDeath, //デス演出
+	};
+	//ゲームの現在フェーズから開始
+	Phase phase_;
+
 
 
 	std::vector<std::vector<KamataEngine::WorldTransform*>> worldTransformBlocks_; // stdでエラーが起きたらKamataEngine::をいれる
@@ -38,7 +61,7 @@ public:
 	// デバックカメラの生成
 	// debugCamera_ = new DebugCamera();
 
-	// 3Dモデル
+	// 天球
 	KamataEngine::Model* modelskydome_ = nullptr;
 
 	// モデルプレイヤー

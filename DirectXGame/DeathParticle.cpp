@@ -12,7 +12,7 @@
 using namespace KamataEngine;
 using namespace MathUtility;
 
-void DeathParticle::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& position)
+void DeathParticle::Initialize(Model* model, Camera* camera, KamataEngine::Vector3 position)
 {
 	// NULLポイントチェック
 	assert(model);
@@ -89,10 +89,10 @@ void DeathParticle::Update()
 	{
 		counter_ = kDuration;
 		//終了扱いにする
-		isFunished_ = true;
+		isFinished_ = true;
 	}
 	//終了なら何もしない
-	if (isFunished_)
+	if (isFinished_)
 	{
 		return;
 	}
@@ -113,7 +113,7 @@ void DeathParticle::Draw()
 	}
 
 	// 終了なら何もしない
-	if (isFunished_)
+	if (isFinished_)
 	{
 		return;
 	}

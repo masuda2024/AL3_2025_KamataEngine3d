@@ -69,7 +69,17 @@ void Player::Update()
 	worldTransform_.TransferMatrix(); // プレイヤーの座標の計算
 }
 
-void Player::Draw() { model_->Draw(worldTransform_, *camera_); }
+
+//プレイヤーの描画(敵当たったら非表示になる)
+void Player::Draw() 
+{
+	if (isDead_)
+	{
+		return;
+	}
+		
+	model_->Draw(worldTransform_, *camera_);
+}
 
 // 移動入力
 void Player::InputMove()
@@ -541,6 +551,11 @@ AABB Player::GetAABB()
 void Player::OnCollition(const Enemy* enemy)
 {
 	(void)enemy;
+	
+	//デスフラグを立てる
+	isDead_ = true;
+	
+	
 	// ジャンプ開始
-	velocity_ += KamataEngine::Vector3(0, kJumpAcceleration, 0);
+	//velocity_ += KamataEngine::Vector3(0, kJumpAcceleration, 0);
 }

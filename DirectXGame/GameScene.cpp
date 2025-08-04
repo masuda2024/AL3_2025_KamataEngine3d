@@ -5,7 +5,7 @@
 #include "Player.h"
 #include "Enemy.h"
 #include "Skydome.h"
-
+#include "Fade.h"
 using namespace KamataEngine;
 
 
@@ -147,6 +147,13 @@ void GameScene::Initialize()
 	// マップチップフィールドの生成と初期化
 
 
+	//フェーズインから開始
+	phase_ = Phase::kFadeIn;
+	
+	// フェード
+	fade_ = new Fade();
+	fade_->Initialize();
+	fade_->Start(Fade::Status::FadeIn, 1.0f);
 }
 
 
@@ -196,6 +203,9 @@ GameScene::~GameScene()
 
 	delete deathParticles_;
 
+	// フェード
+	delete fade_;
+
 	for (Enemy* enemy : enemies_)
 	{
 		delete enemy;
@@ -231,7 +241,8 @@ void GameScene::Update()
 {
 
 
-
+	// フェード
+	fade_->Update();
 
 	switch (phase_)
 	{
@@ -329,6 +340,9 @@ void GameScene::Update()
 		
 		if ("deathParticle", true)
 		{
+			//フェードアウト開始
+			phase_ = Phase::kFadeOut;
+			fade_->Start(Fade::Status::FadeOut, 1.0f);
 			deathParticles_->Update();
 			finished_ = deathParticles_->isFinished_;
 		}
@@ -361,11 +375,23 @@ void GameScene::Update()
 				worldTransformBlock->TransferMatrix();
 			}
 		}
-
-		
-
-
 		break;
+		case Phase::kFadeIn:
+			//フェード
+		    fade_->Update();
+			if (fade_->IsFinished())
+			{
+			    phase_ = Phase::kPlay;
+			}
+		    break;
+	    case Phase::kFadeOut:
+		    // フェード
+		    fade_->Update();
+		    if (fade_->IsFinished())
+			{
+			    finished_ = true;
+		    }
+		    break;
 	}
 
 
@@ -430,8 +456,18 @@ void GameScene::Draw()
 	// model_->Draw(worldTransform_, camera_, textureHandle_);
 
 	// 自キャラの描画
-	player_->Draw();
 	
+	
+	if (phase_ == Phase::kPlay || phase_ == Phase::kFadeIn)
+	{
+		player_->Draw();
+	}
+
+
+
+
+
+
 	//パーティクル
 	if ("deathParticle", true) 
 	{
@@ -446,7 +482,7 @@ void GameScene::Draw()
 		enemy->Draw();
 	}
 
-
+	//ブロックの描画
 	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_)
 	{
 		for (WorldTransform* worldTransformBlock : worldTransformBlockLine)
@@ -463,6 +499,9 @@ void GameScene::Draw()
 
 	// 3Dモデル描画前処理
 	Model::PostDraw(); // プログラムの終了
+
+	// フェード
+	fade_->Draw();
 }
 
 
@@ -531,8 +570,10 @@ void GameScene::ChangePhase()
 	case Phase::kDeath:
 		// デス演出フェーズの処理
 		
+
 		if (deathParticles_)
 		{
+			//シーン終了
 			finished_ = true;
 		}
 		

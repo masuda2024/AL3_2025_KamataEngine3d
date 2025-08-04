@@ -1,10 +1,21 @@
 #pragma once
 #include "KamataEngine.h"
+
+ #include"Fade.h"
+
 #include "Player.h"
 /**/
 class TitleScene
 {
 public:
+
+	enum class Phase
+	{
+		kFadeIn,  //フェードイン
+		kMain,    //メイン部
+		kFadeOut, //フェードアウト
+	};
+
 
 
 	//終了フラグ
@@ -16,6 +27,9 @@ public:
 	void Initialize();
 	void Update();
 	void Draw();
+	 
+	//デストラクタ
+	~TitleScene();
 	//void ChangeScene();
 	std::vector<std::vector<KamataEngine::WorldTransform*>> worldTransformBlocks_; // stdでエラーが起きたらKamataEngine::をいれる
 
@@ -26,28 +40,38 @@ public:
 
 
 
-	// モデルプレイヤー
-	KamataEngine::Model* modelPlayer_ = nullptr;
+	
 
-
-	// ワールドトランスフォーム
-	KamataEngine::WorldTransform worldTransform_;
-	KamataEngine::WorldTransform worldTransformPlayer_;
-
-	// カメラ
-	KamataEngine::Camera camera_;
+	
+	
 	
 	// スプライト
 	KamataEngine::Sprite* sprite_ = nullptr;
 
-	// 3Dモデルデータ
-	KamataEngine::Model* model_ = nullptr;
-
+	
 	// 自キャラ
 	Player* player_ = nullptr;
 
 	// マップチップフィールド
 	MapChipField* mapChipField_;
 
+	
+
 private:
+	// 3Dモデルデータ
+	KamataEngine::Model* model_ = nullptr;
+	// モデルプレイヤー
+	KamataEngine::Model* modelPlayer_ = nullptr;
+	// カメラ
+	KamataEngine::Camera camera_;
+	// ワールドトランスフォーム
+	KamataEngine::WorldTransform worldTransform_;
+	KamataEngine::WorldTransform worldTransformPlayer_;
+
+	// フェード
+	Fade* fade_ = nullptr;
+	//現在のフェーズ
+	Phase phase_ = Phase::kFadeIn;
+
+
 };

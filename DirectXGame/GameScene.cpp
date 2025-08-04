@@ -10,9 +10,7 @@ using namespace KamataEngine;
 
 
 
-
-
-
+//初期化
 void GameScene::Initialize()
 { 
 	// h(ヘッターファイル)にいれる
@@ -158,8 +156,7 @@ void GameScene::Initialize()
 
 
 
-
-
+//ブロック
 void GameScene::GenerateBlocks() 
 {
 	// 要素数
@@ -193,6 +190,9 @@ void GameScene::GenerateBlocks()
 	}
 }
 
+
+
+//デストラクタ
 GameScene::~GameScene() 
 {
 	delete sprite_;
@@ -234,9 +234,7 @@ GameScene::~GameScene()
 
 
 
-
-
-
+//更新
 void GameScene::Update() 
 {
 
@@ -247,56 +245,11 @@ void GameScene::Update()
 	switch (phase_)
 	{
 	case Phase::kPlay:
-		// ゲームプレイフェーズの処理
-
 		
-		// 天球の更新
-		skydome_->Update();
-		
-		
-	
-		// 自キャラの更新
-		player_->Update();
-		
-		// 敵の更新
-		// enemy_->Update();
-		for (Enemy* enemy : enemies_) 
-		{
-			enemy->Update();
-		}
-
-		//カメラコントローラーの更新
-		cameraController_->Update();
-
-		
-		// ブロックの更新
-		for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_)
-		{
-			for (WorldTransform* worldTransformBlock : worldTransformBlockLine)
-			{
-
-				if (!worldTransformBlock)
-				{
-					continue;
-				}
-
-				// アフィン変換行列の作成
-
-				worldTransformBlock->matWorld_ = MakeAffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
-
-				////定数バッファに転送する
-
-				worldTransformBlock->TransferMatrix();
-			}
-		}
-
 		// 全ての当たり判定
 		CheckAllCollisions();
 
-
-
-
-
+		// ゲームプレイフェーズの処理
 		if (player_->IsDead() == true)
 		{
 			// デス演出フェーズに切り替え
@@ -308,75 +261,35 @@ void GameScene::Update()
 			// パーティクル
 			deathParticles_ = new DeathParticle();
 			deathParticles_->Initialize(modelParticle_, &camera_, deathParticlesPosition);
-			
-			
-		}
-
-
-
-
-
-
-
+		}		
 		break;
 
 	case Phase::kDeath:
 		// デス演出フェーズの処理
-
-
-		// 天球の更新
-		skydome_->Update();
-
-		// 敵の更新
-		// enemy_->Update();
-		for (Enemy* enemy : enemies_)
+		
+		// デスパーティクルの更新
+		deathParticles_->Update();
+		if (deathParticles_ && deathParticles_->isFinished_)
 		{
-			enemy->Update();
+			// フェードアウト開始
+			phase_ = Phase::kFadeOut;
+			fade_->Start(Fade::Status::FadeOut, 1.0f);
 		}
 
 
-		
-	
-		
+		/*
 		if ("deathParticle", true)
 		{
-			//フェードアウト開始
+			// フェードアウト開始
 			phase_ = Phase::kFadeOut;
 			fade_->Start(Fade::Status::FadeOut, 1.0f);
 			deathParticles_->Update();
 			finished_ = deathParticles_->isFinished_;
 		}
+		*/
 
-		
-
-		// パーティクル
-		deathParticles_->Update();
-
-		//カメラの更新
-		cameraController_->Update();
-
-		// ブロックの更新
-		for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_)
-		{
-			for (WorldTransform* worldTransformBlock : worldTransformBlockLine)
-			{
-
-				if (!worldTransformBlock)
-				{
-					continue;
-				}
-
-				// アフィン変換行列の作成
-
-				worldTransformBlock->matWorld_ = MakeAffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
-
-				////定数バッファに転送する
-
-				worldTransformBlock->TransferMatrix();
-			}
-		}
 		break;
-		case Phase::kFadeIn:
+	case Phase::kFadeIn:
 			//フェード
 		    fade_->Update();
 			if (fade_->IsFinished())
@@ -393,21 +306,26 @@ void GameScene::Update()
 		    }
 		    break;
 	}
-
-
-
-
-
-
 	
+	// 自キャラの更新
+	player_->Update();
+
+	// 天球の更新
+	skydome_->Update();
+
+	// 敵の更新
+	// enemy_->Update();
+	for (Enemy* enemy : enemies_)
+	{
+		enemy->Update();
+	}
     
+	// カメラコントローラーの更新
+	cameraController_->Update();
+
+
 	// 行列を定義バッファに転送
 	// worldTransform_.TransferMatrix();
-	
-
-	
-
-
 	
 
 	// debugCamera_->Update();
@@ -433,16 +351,31 @@ void GameScene::Update()
 		// ビュープロジェクション行列の更新と転送
 		camera_.TransferMatrix();
 	}
+	// ブロックの更新
+	for (std::vector<KamataEngine::WorldTransform*>& worldTransformBlockLine : worldTransformBlocks_)
+	{
+		for (WorldTransform* worldTransformBlock : worldTransformBlockLine)
+		{
 
+			if (!worldTransformBlock)
+			{
+				continue;
+			}
+
+			// アフィン変換行列の作成
+
+			worldTransformBlock->matWorld_ = MakeAffineMatrix(worldTransformBlock->scale_, worldTransformBlock->rotation_, worldTransformBlock->translation_);
+
+			////定数バッファに転送する
+
+			worldTransformBlock->TransferMatrix();
+		}
+	}
 }
 
 
 
-
-
-
-
-
+//描画
 void GameScene::Draw()
 {
 
@@ -456,15 +389,10 @@ void GameScene::Draw()
 	// model_->Draw(worldTransform_, camera_, textureHandle_);
 
 	// 自キャラの描画
-	
-	
 	if (phase_ == Phase::kPlay || phase_ == Phase::kFadeIn)
 	{
 		player_->Draw();
 	}
-
-
-
 
 
 
@@ -474,9 +402,10 @@ void GameScene::Draw()
 		deathParticles_->Draw();
 	}
 
+
+
 	// 敵の描画
 	//enemy_->Draw();
-
 	for (Enemy* enemy : enemies_)
 	{
 		enemy->Draw();
@@ -505,6 +434,8 @@ void GameScene::Draw()
 }
 
 
+
+//衝突判定
 void GameScene::CheckAllCollisions()
 {
 
@@ -544,6 +475,9 @@ void GameScene::CheckAllCollisions()
 
 }
 
+
+
+//フェーズ
 void GameScene::ChangePhase()
 {
 

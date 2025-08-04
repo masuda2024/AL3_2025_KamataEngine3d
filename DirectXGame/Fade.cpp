@@ -79,12 +79,11 @@ void Fade::Start(Status status, float duration)
 
 void Fade::Stop()
 {
-	status_ = Status::None; }
+	status_ = Status::None; 
+}
 
 bool Fade::IsFinished() const
 {
-
-
 	switch (status_)
 	{
 	case Fade::Status::FadeIn:

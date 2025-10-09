@@ -64,16 +64,17 @@ public:
 
 	KamataEngine::Vector3 CornerPosition(const KamataEngine::Vector3& center, Corner corner);
 
+	// 加速度
 	static inline const float kAccleration = 0.1f;
-
-	static inline const float kAttenuation = 0.1f;
-
-	static inline const float kLimitRunSpeed = 0.5f;
+	// 減衰(ブレーキ)
+	static inline const float kAttenuation = 0.5f;
+	// 制限速度
+	static inline const float kLimitRunSpeed = 0.25f;
 
 	// 重力加速度(下方向)
 	static inline const float kGravityAcceleration = 0.1f;
 	// 最大落下速度(下方向)
-	static inline const float kLimitFallSpeed = 0.8f;
+	static inline const float kLimitFallSpeed = 0.5f;
 	// ジャンプ初速(上方向)
 	static inline const float kJumpAcceleration = 0.8f;
 	// 着地時の速度減衰率

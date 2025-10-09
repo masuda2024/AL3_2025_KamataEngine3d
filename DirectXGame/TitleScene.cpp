@@ -10,7 +10,7 @@ void TitleScene::Initialize()
 {
 	//3Dモデルの生成
 	model_ = Model::CreateFromOBJ("titleFont");
-	modelPlayer_ = Model::CreateFromOBJ("player");
+	//modelPlayer_ = Model::CreateFromOBJ("player");
 	//カメラの初期化
 	camera_.Initialize();
 	//ワールド変換の初期化
@@ -84,7 +84,7 @@ void TitleScene::Draw()
 
 	//ここに3Dモデルインスタンスの描画処理を記述する
 	model_->Draw(worldTransform_, camera_);
-	modelPlayer_->Draw(worldTransformPlayer_, camera_);
+	//modelPlayer_->Draw(worldTransformPlayer_, camera_);
 
 	// 3Dモデル描画後処理
 	Model::PostDraw();
@@ -96,7 +96,7 @@ TitleScene::~TitleScene()
 {
 	//モデル 
 	delete model_;
-	delete modelPlayer_;
+	//delete modelPlayer_;
 	// フェード
 	delete fade_;
 

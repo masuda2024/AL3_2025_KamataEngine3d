@@ -13,20 +13,14 @@ using namespace MathUtility;
 
 
 
-
-
-
-
-
-
-
-void Player::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& position) 
+void Player::Initialize(Model* model,Model* modelPlayerAttack,Camera* camera, KamataEngine::Vector3& position) 
 {
 	// NULLポイントチェック
 	assert(model);
 
 	model_ = model;
 
+	modelPlayerAttack_ = modelPlayerAttack;
 	// textureHandle_ = textureHandle;
 
 	worldTransform_.translation_ = position;
@@ -36,10 +30,81 @@ void Player::Initialize(Model* model, Camera* camera, KamataEngine::Vector3& pos
 	worldTransform_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
 
 	worldTransform_.Initialize();
+	
+	
+	// 攻撃ギミック用ワールド変換初期化
+	worldTransformPlayerAttack_.Initialize();
+	worldTransformPlayerAttack_.translation_ = worldTransform_.translation_;
+	worldTransformPlayerAttack_.rotation_ = worldTransform_.rotation_;
+
+
+	switch (behavior_)
+	{
+	// 通常行動
+	case Player::Behavior::kRoot:
+
+		BehaviorRootUpdate();
+
+		break;
+	// 攻撃行動
+	case Player::Behavior::kAttack:
+
+		BehaviorAttackUpdate();
+
+		break;
+	}
+	// 振る舞いリクエストをリセット
+	behaviorRequest_ = Behavior::kUnknown;
 }
+
+
 
 void Player::Update() 
 {
+	
+	#pragma region 通常行動と攻撃行動
+
+	
+	if (behaviorRequest_ != Behavior::kUnknown)
+	{
+		//振る舞いを変更する
+		behavior_ = behaviorRequest_;
+		//各振る舞いごとの初期化を実行
+		switch (behavior_) 
+		{
+		case Player::Behavior::kRoot:
+			
+
+			BehaviorRootInitialize();
+			
+			break;
+		case Player::Behavior::kAttack:
+			
+			
+			BehaviorAttackInitialize();
+				
+			break;
+		}
+		// 振る舞いリクエストをリセット
+		behaviorRequest_ = Behavior::kUnknown;
+	}
+
+
+	
+	
+
+
+
+
+
+	
+
+
+	#pragma endregion
+
+
+
+
 	// 1.移動入力
 	InputMove();
 	// 2.移動量を加速して衝突判定する
@@ -70,6 +135,7 @@ void Player::Update()
 }
 
 
+
 //プレイヤーの描画(敵当たったら非表示になる)
 void Player::Draw() 
 {
@@ -79,11 +145,55 @@ void Player::Draw()
 	}
 		
 	model_->Draw(worldTransform_, *camera_);
+
+	
+	////////////////////
+    ////////////////
+
+	if (behavior_ == Behavior::kAttack)
+	{
+		switch (attackPhase_)
+		{
+		case Player::AttackPhase::kReservoir:
+			
+			default:
+			
+			break;
+		case Player::AttackPhase::kRush:
+			
+			
+			
+			break;
+		case Player::AttackPhase::kLingering:
+			
+			modelPlayerAttack_->Draw(worldTransformPlayerAttack_, *camera_);
+			
+			break;
+		}
+	}
+	
+
+
+
+	////////////////
+	////////////////////
+
+
 }
 
-// 移動入力
+
+#pragma region プレイヤーの挙動
+
+// 1.移動入力
 void Player::InputMove()
 {
+
+	// 攻撃キーを押したら
+	if (Input::GetInstance()->PushKey(DIK_E))
+	{
+		// 攻撃ビヘイビアをリクエスト
+		behaviorRequest_ = Behavior::kAttack;
+	}
 	// 左右移動操作
 	if (onGround_) 
 	{
@@ -146,7 +256,7 @@ void Player::InputMove()
 	// 空中
 	else 
 	{
-
+		
 		// 左右加速
 		Vector3 acceleration = {};
 		if (Input::GetInstance()->PushKey(DIK_RIGHT) || Input::GetInstance()->PushKey(DIK_D))
@@ -534,7 +644,7 @@ void Player::CheckMapLanding(const CollisionMapInfo& info)
 }
 
 // 7.旋回制御
-void Player::AnimateTurn()
+void Player::AnimateTurn() 
 {
 	// 旋回制御
 	if (trunTimer_ > 0.0f) 
@@ -550,6 +660,11 @@ void Player::AnimateTurn()
 	}
 }
 
+#pragma endregion
+
+
+
+
 KamataEngine::Vector3 Player::CornerPosition(const KamataEngine::Vector3& center, Corner corner)
 {
 	KamataEngine::Vector3 offsetTable[kNumCorner] =
@@ -563,10 +678,6 @@ KamataEngine::Vector3 Player::CornerPosition(const KamataEngine::Vector3& center
 	return center + offsetTable[static_cast<uint32_t>(corner)];
 }
 
-
-
-
-
 KamataEngine::Vector3 Player::GetWorldPosition()
 {
 	// ワールド座標を入れる変数
@@ -579,6 +690,9 @@ KamataEngine::Vector3 Player::GetWorldPosition()
 	return worldPos;
 }
 
+
+
+#pragma region 衝突
 AABB Player::GetAABB() 
 {
 	KamataEngine::Vector3 worldPos = GetWorldPosition();
@@ -603,3 +717,148 @@ void Player::OnCollition(const Enemy* enemy)
 	// ジャンプ開始
 	//velocity_ += KamataEngine::Vector3(0, kJumpAcceleration, 0);
 }
+
+#pragma endregion
+
+
+
+#pragma region 通常・攻撃行動の初期化と更新
+// 通常行動初期化
+void Player::BehaviorRootInitialize() {}
+
+// 通常行動更新
+void Player::BehaviorRootUpdate()
+{
+	// 移動入力
+	InputMove();
+	// 衝突情報を初期化
+	CollisionMapInfo collisionMapInfo = {};
+	collisionMapInfo.move = velocity_;
+	collisionMapInfo.langing = false;
+	collisionMapInfo.hitwall = false;
+	// マップ衝突チェック
+	CheckMapCollision(collisionMapInfo);
+	// 判定結果を反映して移動させる
+	worldTransform_.translation_ += collisionMapInfo.move;
+	// 壁に接触している場合の処理
+	if (collisionMapInfo.ceiling)
+	{
+		velocity_.y = 0;
+	}
+	// 接地状態の切り替え
+	if (collisionMapInfo.hitwall)
+	{
+		velocity_.x *= (1.0f - kAttenuationWall);
+	}
+
+
+
+
+
+
+
+	//攻撃キーを押したら
+	if (Input::GetInstance()->PushKey(DIK_E))
+	{
+		//攻撃ビヘイビアをリクエスト
+		behaviorRequest_ = Behavior::kAttack;
+	}
+}
+
+
+// 攻撃行動初期化
+void Player::BehaviorAttackInitialize()
+{ 
+	attackParameter_ = 0; 
+}
+
+// 攻撃行動更新
+void Player::BehaviorAttackUpdate() 
+{
+
+	//予備動作
+	attackParameter_++;
+
+	//既定の時間経過で攻撃終了して通常状態に戻す
+	if (attackParameter_ >= 1.0f)
+	{
+		behaviorRequest_ = Behavior::kRoot;
+	}
+
+
+	// 攻撃動作用の速度
+	Vector3 velocity{};
+	Vector3 attackVelocity{};
+	//攻撃フェーズごとの更新処理
+	switch (attackPhase_)
+	{
+		//溜め
+	case Player::AttackPhase::kReservoir:
+		{
+		default: 
+		{
+			float t = static_cast<float>(attackParameter_) / kReservoirTime;
+			worldTransform_.scale_.z = EaseInOut(1.0f, 0.3f, t);
+			worldTransform_.scale_.y = EaseInOut(1.0f, 1.6f, t);
+			// 前進動作へ移行
+			if (attackParameter_ >= 1.0f)
+			{
+				attackPhase_ = AttackPhase::kRush;
+				attackParameter_ = 0; // カウンターをリセット
+			}
+			break;
+		}
+
+		break;
+		}
+		
+		//突進
+	case Player::AttackPhase::kRush:
+		{
+				if (lrDirection_ != LRDirection::kLeft) 
+				{
+					velocity = +attackVelocity;
+				} else
+				{
+					velocity = -attackVelocity;
+				}
+				float t = static_cast<float>(attackParameter_) / kRushTime;
+				worldTransform_.scale_.z = EaseInOut(0.3f, 1.3f, t);
+				worldTransform_.scale_.y = EaseInOut(1.6f, 0.7f, t);
+				// 余韻動作へ移行
+				attackPhase_ = AttackPhase::kLingering;
+				break;
+		}
+
+		//余韻
+	case Player::AttackPhase::kLingering:
+		{
+			float t = static_cast<float>(attackParameter_) / kLingeringTime;
+			worldTransform_.scale_.z = EaseInOut(1.3f, 1.0f, t);
+			worldTransform_.scale_.y = EaseInOut(0.7f, 1.0f, t);
+			// 通常行動に戻る
+			if (attackParameter_ >= kReservoirTime)
+			{
+				behaviorRequest_ = Behavior::kRoot;
+			}
+			break;
+		}
+	}
+
+	//衝突情報を初期化
+	//CollisionMapInfo.move = velocity;
+
+
+}
+
+#pragma endregion
+
+
+
+
+
+
+
+
+
+

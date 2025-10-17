@@ -6,6 +6,7 @@
 #include "Skydome.h"
 #include "CameraController.h"
 #include "DeathParticle.h"
+#include"PlayerAttack.h"
 #include"Fade.h"
 #include <vector>
 // ゲームシーン
@@ -31,6 +32,8 @@ public:
 
 	// デスフラグのgetter
 	bool IsFinished() const { return finished_; }
+
+
 
 private:
 
@@ -75,6 +78,31 @@ private:
 	// モデルプレイヤー
 	KamataEngine::Model* modelPlayer_ = nullptr;
 	
+
+
+
+	/////////////////////////////////////////////////////////
+	///////////////////////////////
+	////////////////////
+
+	KamataEngine::Model* modelPlayerAttack_ = nullptr;
+
+
+
+
+
+
+
+
+	////////////////////
+	///////////////////////////////
+	/////////////////////////////////////////////////////////
+	
+
+
+
+
+
 
 
 	// 天球

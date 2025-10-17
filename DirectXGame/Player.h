@@ -49,7 +49,14 @@ public:
 	void CheckMapLanding(const CollisionMapInfo& info);
 	// 着地フラグ
 
+
+
+
 	
+
+
+
+
 	// 角
 	enum Corner 
 	{
@@ -118,10 +125,66 @@ public:
 	void OnCollition(const Enemy* enemy);
 
 
+	
+	#pragma region 通常・攻撃行動
+
+	
+
+	// 振る舞い
+	enum class Behavior 
+	{
+		kUnknown = -1, //無効な状態
+		kRoot,         // 通常状態
+		kAttack,       // 攻撃中
+	};
+	// 攻撃フェーズ(型)
+	enum class AttackPhase
+	{
+		kUnknown = -1, //無効な状態
+		kReservoir,    // 溜め
+		kRush,         // 突進
+		kLingering,    // 余韻
+	};
+
+	Behavior behavior_ = Behavior::kRoot;
+
+
+	// 次の振る舞いリクエスト
+	Behavior behaviorRequest_ = Behavior::kUnknown;
+	// 攻撃ギミックの経過時間カウンター
+	uint32_t attackParameter_ = 0;
+	// 現在の攻撃フェーズ
+	AttackPhase attackPhase_ = AttackPhase::kUnknown;
+	AttackPhase attackPhaseRequest_ = AttackPhase::kUnknown;
+	// 通常行動初期化
+	void BehaviorRootInitialize();
+	// 通常行動更新
+	void BehaviorRootUpdate();
+	// 攻撃行動初期化
+	void BehaviorAttackInitialize();
+	// 攻撃行動更新
+	void BehaviorAttackUpdate();
+
+
+
+
+#pragma endregion
+
 
 
 	// 初期化
-	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, KamataEngine::Vector3& position);
+	void Initialize(KamataEngine::Model* model, KamataEngine::Model* modelPlayerAttack, KamataEngine::Camera* camera, KamataEngine::Vector3& position);
+
+	//予備動作時間
+	static inline const uint32_t kReservoirTime = 8;
+	//前進動作の時間
+	static inline const uint32_t kRushTime = 5;
+	//余韻動作の時間
+	static inline const uint32_t kLingeringTime = 8;
+
+
+
+
 
 	void InputMove();
 
@@ -135,6 +198,24 @@ public:
 
 	void AnimateTurn();
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 private:
 	// ワールド変換データ
 	KamataEngine::WorldTransform worldTransform_;
@@ -147,5 +228,14 @@ private:
 	// モデル
 	KamataEngine::Model* model_;
 
+	
+
 	KamataEngine::Vector3 velocity_ = {};
+
+
+	KamataEngine::Model* modelPlayerAttack_ = nullptr;
+	KamataEngine::WorldTransform worldTransformPlayerAttack_;
+	
+
+
 };

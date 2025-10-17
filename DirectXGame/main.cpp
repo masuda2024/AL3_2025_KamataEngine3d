@@ -15,8 +15,8 @@ enum class Scene
 	kTitle,
 	kGame,
 };
-Scene scene = Scene::kUnknown;
-
+//Scene scene = Scene::kUnknown;
+Scene scene;
 
 
 
@@ -47,11 +47,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int)
 	
 	
 
-	/*
+	/**/
 	
 	//ゲームシーンの初期化
+	scene = Scene::kGame;
+	gameScene = new GameScene;
 	gameScene->Initialize();
-    */
+    
 	
 
 

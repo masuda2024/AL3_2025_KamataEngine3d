@@ -44,6 +44,8 @@ void GameScene::Initialize()
 	//パーティクルの3Dモデルデータの生成
 	modelParticle_ = Model::CreateFromOBJ("deathParticle", true);
 
+	//攻撃エフェクトの3Dモデル
+	modelPlayerAttack_ = Model::CreateFromOBJ("hit_effect", true);
 
 
 
@@ -77,7 +79,8 @@ void GameScene::Initialize()
 
 	// 座標をマップチップ番号で指定
 	Vector3 playerPosition = mapChipField_->GetMapChipPositionByIndex(1, 18);
-	player_->Initialize(modelPlayer_, &camera_, playerPosition);
+	//player_->Initialize(modelPlayer_, &camera_, playerPosition);
+	player_->Initialize(modelPlayer_,modelPlayerAttack_, &camera_, playerPosition);
 	player_->SetMapChipField(mapChipField_); // 自キャラの生成と初期化
 	
 	
@@ -87,9 +90,6 @@ void GameScene::Initialize()
 	deathParticles_ = new DeathParticle();
 	deathParticles_->Initialize(modelParticle_, &camera_, playerPosition);
 	
-
-
-
 
 	
 	// ワールドトランスフォームの初期化
@@ -200,6 +200,12 @@ GameScene::~GameScene()
 	delete skydome_;
 
 	delete player_;
+
+	/////////////////////////
+	///////
+    delete modelPlayerAttack_;
+	///////
+	/////////////////////////
 
 	delete deathParticles_;
 

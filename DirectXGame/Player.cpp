@@ -37,8 +37,51 @@ void Player::Initialize(Model* model,Model* modelPlayerAttack,Camera* camera, Ka
 	worldTransformPlayerAttack_.translation_ = worldTransform_.translation_;
 	worldTransformPlayerAttack_.rotation_ = worldTransform_.rotation_;
 
+	
 
-	switch (behavior_)
+
+	#pragma region 通常行動と攻撃行動
+
+	if (behaviorRequest_ != Behavior::kUnknown)
+	{
+		// 振る舞いを変更する
+		behavior_ = behaviorRequest_;
+		// 各振る舞いごとの初期化を実行
+		switch (behavior_)
+		{
+		case Player::Behavior::kRoot:
+
+			BehaviorRootInitialize();
+
+			break;
+		case Player::Behavior::kAttack:
+
+			BehaviorAttackInitialize();
+
+			break;
+		}
+		// 振る舞いリクエストをリセット
+		behaviorRequest_ = Behavior::kUnknown;
+	}
+
+    #pragma endregion
+
+
+
+
+
+
+
+	
+}
+
+
+
+void Player::Update() 
+{
+	
+	
+	switch (behavior_) 
 	{
 	// 通常行動
 	case Player::Behavior::kRoot:
@@ -55,58 +98,11 @@ void Player::Initialize(Model* model,Model* modelPlayerAttack,Camera* camera, Ka
 	}
 	// 振る舞いリクエストをリセット
 	behaviorRequest_ = Behavior::kUnknown;
-}
-
-
-
-void Player::Update() 
-{
-	
-	#pragma region 通常行動と攻撃行動
-
-	
-	if (behaviorRequest_ != Behavior::kUnknown)
-	{
-		//振る舞いを変更する
-		behavior_ = behaviorRequest_;
-		//各振る舞いごとの初期化を実行
-		switch (behavior_) 
-		{
-		case Player::Behavior::kRoot:
-			
-
-			BehaviorRootInitialize();
-			
-			break;
-		case Player::Behavior::kAttack:
-			
-			
-			BehaviorAttackInitialize();
-				
-			break;
-		}
-		// 振る舞いリクエストをリセット
-		behaviorRequest_ = Behavior::kUnknown;
-	}
-
-
-	
-	
-
-
-
-
-
-	
-
-
-	#pragma endregion
-
 
 
 
 	// 1.移動入力
-	InputMove();
+	//InputMove();
 	// 2.移動量を加速して衝突判定する
 	// 衝突情報を初期化
 	CollisionMapInfo collisionMapInfo;
@@ -132,6 +128,23 @@ void Player::Update()
 	// アフィン変換行列
 	worldTransform_.matWorld_ = MakeAffineMatrix(worldTransform_.scale_, worldTransform_.rotation_, worldTransform_.translation_);
 	worldTransform_.TransferMatrix(); // プレイヤーの座標の計算
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
 }
 
 

@@ -126,7 +126,7 @@ public:
 
 
 	
-	#pragma region 通常・攻撃行動
+#pragma region 通常・攻撃行動
 
 	
 

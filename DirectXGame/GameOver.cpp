@@ -12,7 +12,7 @@ void GameOver::Initialize() {
 	// modelPlayer_ = Model::CreateFromOBJ("player");
 	modelBack_ = Model::CreateFromOBJ("Back_UI");
 	modelskydome_ = Model::CreateFromOBJ("skydome");
-	// modelOverFont_ = Model::CreateFromOBJ("TutorialFont");
+	modelOverFont_ = Model::CreateFromOBJ("OverFont");
 	//  カメラ初期化
 	camera_.Initialize();
 
@@ -61,7 +61,7 @@ void GameOver::Draw() {
 
 	modelskydome_->Draw(worldTransform_, camera_);
 
-	// modelOverFont_->Draw(worldTransform_, camera_);
+	modelOverFont_->Draw(worldTransform_, camera_);
 
 	Model::PostDraw();
 

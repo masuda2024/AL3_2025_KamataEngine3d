@@ -12,7 +12,7 @@ void GameClear::Initialize() {
 	// modelPlayer_ = Model::CreateFromOBJ("player");
 	modelBack_ = Model::CreateFromOBJ("Back_UI");
 	modelskydome_ = Model::CreateFromOBJ("skydome");
-	// modelClearFont_ = Model::CreateFromOBJ("TutorialFont");
+	modelClearFont_ = Model::CreateFromOBJ("ClearFont");
 	//  カメラ初期化
 	camera_.Initialize();
 
@@ -61,7 +61,7 @@ void GameClear::Draw() {
 
 	modelskydome_->Draw(worldTransform_, camera_);
 
-	// modelClearFont_->Draw(worldTransform_, camera_);
+	modelClearFont_->Draw(worldTransform_, camera_);
 
 	Model::PostDraw();
 

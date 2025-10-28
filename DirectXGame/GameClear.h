@@ -30,7 +30,7 @@ public:
 	KamataEngine::Model* modelskydome_ = nullptr;
 	Skydome* skydome_ = nullptr;
 
-	// KamataEngine::Model* modelClearFont_;
+    KamataEngine::Model* modelClearFont_;
 
 	// デスフラグのgetter
 	bool IsFinishedClear() const { return finishedClear_; }

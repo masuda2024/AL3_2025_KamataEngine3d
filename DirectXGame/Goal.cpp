@@ -1,10 +1,11 @@
 #include "Goal.h"
 #include "MyMath.h"
+#include <cassert>
 
-void Goal::Initialize(const KamataEngine::Vector3& position, KamataEngine::Camera* camera, const KamataEngine::Vector3& size, KamataEngine::Model* model) {
+void Goal::Initialize(const KamataEngine::Vector3& position,  const KamataEngine::Vector3& size, KamataEngine::Model* model) {
 
+	assert(model);
 	model_ = model;
-	camera_ = camera;
 	position_ = position;
 	size_ = size;
 	worldTransform_.Initialize();

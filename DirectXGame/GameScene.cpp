@@ -75,10 +75,12 @@ void GameScene::Initialize() {
 
 	// ゴールの初期化
 
-	goal_ = new Goal();
+	//goal_ = new Goal();
 	Vector3 goalPosition = mapChipField_->GetMapChipPositionByIndex(10, 33); // ゴール置く位置 変える(14,7)
 	Vector3 goalSize = {1.0f, 1.0f, 1.0f};
-	goal_->Initialize(goalPosition, &camera_, goalSize, modelGoal_);
+	goal_.Initialize(goalPosition, goalSize, modelGoal_);
+	
+
 
 	// つかむ場所のマップチップ番号リスト
 	std::vector<KamataEngine::Vector2> grabTilePositions = {
@@ -157,6 +159,7 @@ void GameScene::CheckAllCollisions() {
 			player_->OnCollision(enemy);
 
 			enemy->OnCollision(player_);
+			isover_ = true;
 		}
 	}
 
@@ -178,12 +181,13 @@ void GameScene::CheckAllCollisions() {
 
 	aabb3 = player_->GetAABB();
 
-	aabb4 = goal_->GetAABB();
+	aabb4 = goal_.GetAABB();
 
 	if (IsCollision(aabb2, aabb4)) {
-		player_->OnCollisionGoal(goal_);
+		player_->OnCollisionGoal(&goal_);
 
-		goal_->GoalOnCollision(player_);
+		goal_.GoalOnCollision(player_);
+		isclear_ = true;
 	}
 
 #pragma endregion
@@ -271,12 +275,15 @@ void GameScene::Update() {
 		CheckAllCollisions();
 		if (phase_ == Phase::kFadeOut) {
 			Particles_->Update();
+			nextover_ = true;
 		}
 		if (fade_->isFinished()) {
 			if (nextover_ == true) {
 				isover_ = true;
+				
 			} else if (nextclear_ == true) {
 				isclear_ = true;
+				
 			}
 		}
 		break;
@@ -366,11 +373,15 @@ void GameScene::Draw() {
 		enemy->Draw();
 	}
 
+	goal_.Draw(&camera_);
+
+
 	for (Grab* goal : grabs_) {
 		goal->Draw(&camera_);
 	}
 
-	goal_->Draw(&camera_);
+
+
 
 	if (Particles_) {
 		Particles_->Draw();

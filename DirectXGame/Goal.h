@@ -6,7 +6,7 @@ struct AABB;
 class Player;
 class Goal {
 public:
-	void Initialize(const KamataEngine::Vector3& position, KamataEngine::Camera* camera, const KamataEngine::Vector3& size, KamataEngine::Model* model);
+	void Initialize(const KamataEngine::Vector3& position,const KamataEngine::Vector3& size, KamataEngine::Model* model);
 	void Update();
 	void Draw(KamataEngine::Camera* camera);
 
@@ -19,11 +19,13 @@ public:
 	// 衝突応答
 	void GoalOnCollision(const Player* player);
 
-	KamataEngine::Model* model_ = nullptr;   // モデル
-	KamataEngine::Camera* camera_ = nullptr; // カメラ
+	
+	
 private:
+	
 	KamataEngine::Vector3 position_;
 	KamataEngine::Vector3 size_;
+	KamataEngine::Model* model_ = nullptr;
 	KamataEngine::WorldTransform worldTransform_;
 
 	bool reached_ = false;

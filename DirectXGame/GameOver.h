@@ -31,7 +31,7 @@ public:
 	KamataEngine::Model* modelskydome_ = nullptr;
 	Skydome* skydome_ = nullptr;
 
-	// KamataEngine::Model* modelOverFont_;
+	KamataEngine::Model* modelOverFont_;
 
 	// デスフラグのgetter
 	bool IsFinishedOver() const { return finishedOver_; }

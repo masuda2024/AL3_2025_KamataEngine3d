@@ -1,26 +1,38 @@
 #pragma once
+#include "CameraController.h"
+#include "Enemy.h"
+#include "Fade.h"
+#include "Goal.h"
+#include "Grab.h"
 #include "KamataEngine.h"
 #include "MapChipField.h"
+#include "Particle.h"
 #include "Player.h"
-#include "Enemy.h"
 #include "Skydome.h"
-#include "CameraController.h"
-#include "DeathParticle.h"
-#include"PlayerAttack.h"
-#include"Fade.h"
+#include "TitleScene.h"
 #include <vector>
-// ゲームシーン
 
+class GameScene {
 
+private:
+	// テクスチャハンドル
+	uint32_t textureHandle_ = 0;
 
+	bool finished_ = false;
 
-class GameScene
-{
+	Grab grab_;
+
+	// Goal goal_;
+
 public:
+	enum class Phase {
+		kFadeIn,
+		kPlay,
+		kDeath,
+		kFadeOut,
+		kFadeOut2,
+	};
 
-	// デストラクタ
-	~GameScene();
-	
 	// 初期化
 	void Initialize();
 
@@ -30,33 +42,23 @@ public:
 	// 描画
 	void Draw();
 
-	// デスフラグのgetter
-	bool IsFinished() const { return finished_; }
+	// デストラクタ
+	~GameScene();
 
+	// 3Dモデル
+	KamataEngine::Model* modelBlock_;
 
+	KamataEngine::Model* modelSkydome_ = nullptr;
 
-private:
+	KamataEngine::Model* modelPlayer_ = nullptr;
 
-	// テクスチャハンドル
-	uint32_t textureHandle_ = 0;
-	// 3Dモデルデータ
-	KamataEngine::Model* model_ = nullptr;
+	KamataEngine::Model* modelEnemy_ = nullptr;
 
+	KamataEngine::Model* modelDeathParticle_ = nullptr;
 
+	KamataEngine::Model* modelGrab_ = nullptr;
 
-	std::vector<std::vector<KamataEngine::WorldTransform*>> worldTransformBlocks_; // stdでエラーが起きたらKamataEngine::をいれる
-
-	
-
-	// デバックカメラ有効
-	bool isDebugCameraActive_ = false;
-
-	// デバックカメラ
-	KamataEngine::DebugCamera* debugCamera_ = nullptr;
-
-	// デバックカメラの生成
-	// debugCamera_ = new DebugCamera();
-
+	KamataEngine::Model* modelGoal_ = nullptr;
 
 	// ワールドトランスフォーム
 	KamataEngine::WorldTransform worldTransform_;
@@ -64,96 +66,60 @@ private:
 	// カメラ
 	KamataEngine::Camera camera_;
 
-	// スプライト
-	KamataEngine::Sprite* sprite_ = nullptr;
-
-	// キューブ
-	Skydome* skydome_ = nullptr;
-
-	// 3D
-	KamataEngine::Model* cube_ = nullptr;
-
 	// 自キャラ
 	Player* player_ = nullptr;
-	// モデルプレイヤー
-	KamataEngine::Model* modelPlayer_ = nullptr;
-	
 
+	// sky
+	Skydome* skydome_ = nullptr;
 
-
-	/////////////////////////////////////////////////////////
-	///////////////////////////////
-	////////////////////
-
-	KamataEngine::Model* modelPlayerAttack_ = nullptr;
-
-
-
-
-
-
-
-
-	////////////////////
-	///////////////////////////////
-	/////////////////////////////////////////////////////////
-	
-
-
-
-
-
-
-
-	// 天球
-	KamataEngine::Model* modelskydome_ = nullptr;
-	
-	// マップチップフィールド
-	MapChipField* mapChipField_;
-	
-	// 表示ブロックの生成
-	void GenerateBlocks();
-	
-	// カメラコントロール
-	CameraController* cameraController_ = nullptr;
-	// void Initialize();
-	// KamataEngine::Model* cameraModel_;
-	
 	// 敵
-	KamataEngine::Model* modelEnemy_ = nullptr;
-	// 敵
-	// Enemy* enemy_ = nullptr;
 	std::list<Enemy*> enemies_;
-	
-	// 全ての当たり判定
-	void CheckAllCollisions();
+
+	// ゴール
+	Goal* goal_ = nullptr;
+
+	// つかむ場所
+	std::vector<Grab*> grabs_;
 
 	// パーティクル
-	KamataEngine::Model* modelParticle_ = nullptr;
+	Particle* Particles_ = nullptr;
 
-	// モデルパーティクル
-	DeathParticle* deathParticles_ = nullptr;
+	// カメラコントローラ
+	CameraController* cameraController_ = nullptr;
 
-	// ゲームのフェーズ(型)
-	enum class Phase
-	{
-		kFadeIn, // フェードイン
-		kPlay,   // ゲームプレイ
-		kDeath,  // デス演出
-		kFadeOut,// フェードアウト
-	};
+	// マップチップフィールド
+	MapChipField* mapChipField_;
 
-	// ゲームの現在フェーズから開始
-	Phase phase_;
-	
-	// フェーズの切り替え
+	// デバッグカメラ有効
+	bool isDebugCameraActive_ = false;
+
+	// デバッグカメラ
+	KamataEngine::DebugCamera* debugCamera_ = nullptr;
+
+	std::vector<std::vector<KamataEngine::WorldTransform*>> worldTransformBlocks_;
+
+	void GenerateBlocks();
+
+	void CheckAllCollisions();
+
 	void ChangePhase();
-	
-	// 終了フラグ
-	bool finished_ = false;
-	
-	// フェード
-	Fade* fade_ = nullptr;
 
-	
+	// ゲームプレイから開始
+	Phase phase_;
+
+	bool isFinished() const { return isclear_; }
+	bool isFinished2() const { return isover_; }
+
+private:
+	// ゲームクリア
+	bool nextclear_ = false;
+	bool isclear_ = false;
+
+	// ゲームオーバー
+	bool nextover_ = false;
+	bool isover_ = false;
+
+	bool grabbed = false;
+
+	Fade* fade_ = nullptr;
 };

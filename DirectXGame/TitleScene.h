@@ -1,72 +1,44 @@
 #pragma once
-#include "KamataEngine.h"
-
- #include"Fade.h"
-
-#include "Player.h"
-/**/
-class TitleScene
-{
+#include "Fade.h"
+#include "Skydome.h"
+#include <KamataEngine.h>
+class TitleScene {
 public:
-
-	enum class Phase
-	{
-		kFadeIn,  //フェードイン
-		kMain,    //メイン部
-		kFadeOut, //フェードアウト
+	enum class Phase {
+		kFadeIn,
+		kMain,
+		kFadeOut,
 	};
-
-
-
-	//終了フラグ
-	bool finished_ = false;
-	//デスフラグのgetter
-	bool IsFinished() const { return finished_; }
-
 
 	void Initialize();
 	void Update();
 	void Draw();
-	 
-	//デストラクタ
 	~TitleScene();
-	//void ChangeScene();
-	std::vector<std::vector<KamataEngine::WorldTransform*>> worldTransformBlocks_; // stdでエラーが起きたらKamataEngine::をいれる
 
-	// テクスチャハンドル
-	uint32_t textureHandle_ = 0;
+	KamataEngine::Model* model_;
+	KamataEngine::Model* modelPlayer_;
+	KamataEngine::Model* modelTitle_;
+	KamataEngine::Model* modelCredit_;
+	KamataEngine::Camera camera_;
+	KamataEngine::Model* modelSkydome_;
+	KamataEngine::WorldTransform worldTransform_;
 
-
-
-	
-	
-	// スプライト
-	KamataEngine::Sprite* sprite_ = nullptr;
-
-	
-	// 自キャラ
-	Player* player_ = nullptr;
-
-	// マップチップフィールド
-	MapChipField* mapChipField_;
-
-	
+	KamataEngine::WorldTransform worldTransformPlayer_;
+	// タイトルからゲーム
+	bool isFinished() const { return finished_; }
+	// タイトルからチュートリアル
+	bool isFinished2() const { return finished2_; }
 
 private:
-	// 3Dモデルデータ
-	KamataEngine::Model* model_ = nullptr;
-	// モデルプレイヤー
-	KamataEngine::Model* modelPlayer_ = nullptr;
-	// カメラ
-	KamataEngine::Camera camera_;
-	// ワールドトランスフォーム
-	KamataEngine::WorldTransform worldTransform_;
-	KamataEngine::WorldTransform worldTransformPlayer_;
+	bool nextTutorial_ = false;
 
-	// フェード
+	// タイトルからゲーム
+	bool finished_ = false;
+
+	// タイトルからチュートリアル
+	bool finished2_ = false;
+
 	Fade* fade_ = nullptr;
-	//現在のフェーズ
+
 	Phase phase_ = Phase::kFadeIn;
-
-
 };

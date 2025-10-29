@@ -37,6 +37,16 @@ GameClear* gameclear = nullptr;
 
 GameOver* gameover = nullptr;
 
+
+
+
+
+// 音声再生ハンドル
+uint32_t soundHandle_ = 0;
+uint32_t voiceHandle_ = 0;
+
+
+
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 
@@ -68,6 +78,15 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 	// ゲームオーバー
 	gameover = new GameOver;
 	gameover->Initialize();
+
+
+
+	// サウンド
+	soundHandle_ = Audio::GetInstance()->LoadWave("Bgm//bgm/bgm.mp3");
+	voiceHandle_ = Audio::GetInstance()->PlayWave(soundHandle_, true);
+	
+
+
 
 	// メインループ
 	while (true) {
@@ -106,7 +125,13 @@ int WINAPI WinMain(_In_ HINSTANCE, _In_opt_ HINSTANCE, _In_ LPSTR, _In_ int) {
 void ChangeScene() {
 	switch (scene) {
 	case Scene::kTitle:
+
+		
+	
+
 		if (titleScene->isFinished()) {
+			// 音声停止
+			Audio::GetInstance()->StopWave(voiceHandle_); 
 			// scene変化
 			scene = Scene::kGame;
 			// 旧scene開放
@@ -115,9 +140,12 @@ void ChangeScene() {
 			// 新scene生成と初期化
 			gameScene = new GameScene;
 			gameScene->Initialize();
+			voiceHandle_ = Audio::GetInstance()->PlayWave(soundHandle_, true);
 		}
 
 		else if (titleScene->isFinished2()) {
+			// 音声停止
+			Audio::GetInstance()->StopWave(voiceHandle_); 
 			// scene変化
 			scene = Scene::kTutorial;
 			// 旧scene開放
@@ -126,11 +154,18 @@ void ChangeScene() {
 			// 新scene生成と初期化
 			tutorial = new Tutorial;
 			tutorial->Initialize();
+			voiceHandle_ = Audio::GetInstance()->PlayWave(soundHandle_, true);
 		}
 		break;
 
 	case Scene::kTutorial:
+
+
+		
+
 		if (tutorial->isFinishedTutorial()) {
+			// 音声停止
+			Audio::GetInstance()->StopWave(voiceHandle_); 
 			// scene変化
 			scene = Scene::kTitle;
 			// 旧scene開放
@@ -139,14 +174,21 @@ void ChangeScene() {
 			// 新scene生成と初期化
 			titleScene = new TitleScene;
 			titleScene->Initialize();
+			voiceHandle_ = Audio::GetInstance()->PlayWave(soundHandle_, true);
 		}
 		break;
 
 	case Scene::kGame:
+
+		
+
+
 		// ゲームシーンの更新処理
 		if (gameScene) {
 
 			if (gameScene->isFinished()) {
+				// 音声停止
+				Audio::GetInstance()->StopWave(voiceHandle_); 
 				// scene変化
 				scene = Scene::kGameClear;
 				// 旧scene開放
@@ -155,7 +197,12 @@ void ChangeScene() {
 				// 新scene生成と初期化
 				gameclear = new GameClear;
 				gameclear->Initialize();
+
+				
+
 			} else if (gameScene->isFinished2()) {
+				// 音声停止
+				Audio::GetInstance()->StopWave(voiceHandle_); 
 				// scene変化
 				scene = Scene::kGameOver;
 				// 旧scene開放
@@ -164,13 +211,21 @@ void ChangeScene() {
 				// 新scene生成と初期化
 				gameover = new GameOver;
 				gameover->Initialize();
+
+
+				
+
 			}
 		}
 		break;
 
 	case Scene::kGameClear:
 
+
+
 		if (gameclear->IsFinishedClear()) {
+			// 音声停止
+			Audio::GetInstance()->StopWave(voiceHandle_); 
 			// scene変化
 			scene = Scene::kTitle;
 			// 旧scene開放
@@ -179,12 +234,20 @@ void ChangeScene() {
 			// 新scene生成と初期化
 			titleScene = new TitleScene;
 			titleScene->Initialize();
+
+
+			voiceHandle_ = Audio::GetInstance()->PlayWave(soundHandle_, true);
+
 		}
 		break;
 
 	case Scene::kGameOver:
 
+
+
 		if (gameover->IsFinishedOver()) {
+			// 音声停止
+			Audio::GetInstance()->StopWave(voiceHandle_); 
 			// scene変化
 			scene = Scene::kTitle;
 			// 旧scene開放
@@ -193,6 +256,12 @@ void ChangeScene() {
 			// 新scene生成と初期化
 			titleScene = new TitleScene;
 			titleScene->Initialize();
+
+
+
+			voiceHandle_ = Audio::GetInstance()->PlayWave(soundHandle_, true);
+
+
 		}
 		break;
 	}
@@ -201,6 +270,7 @@ void ChangeScene() {
 void UpdateScene() {
 	switch (scene) {
 	case Scene::kTitle:
+		
 		titleScene->Update();
 		break;
 

@@ -28,8 +28,15 @@ public:
 	bool isFinished() const { return finished_; }
 	// タイトルからチュートリアル
 	bool isFinished2() const { return finished2_; }
+	
 
 private:
+
+
+	
+
+
+
 	bool nextTutorial_ = false;
 
 	// タイトルからゲーム

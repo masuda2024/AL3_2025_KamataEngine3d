@@ -14,6 +14,12 @@ void Tutorial::Initialize() {
 	modelBack_ = Model::CreateFromOBJ("Back_UI");
 	modelskydome_ = Model::CreateFromOBJ("skydome");
 	modelTutorialFont_ = Model::CreateFromOBJ("TutorialFont");
+	modelTutorialFont2_ = Model::CreateFromOBJ("TutorialFont2");
+	
+
+	
+	
+
 	// カメラ初期化
 	camera_.Initialize();
 
@@ -32,6 +38,7 @@ void Tutorial::Update() {
 		if (Input::GetInstance()->PushKey(DIK_E)) {
 			phase_ = Phase::kFadeOut;
 			fade_->Start(Fade::Status::FadeOut, 1.0f);
+			
 		}
 		break;
 	case Phase::kFadeIn:
@@ -63,6 +70,7 @@ void Tutorial::Draw() {
 	modelskydome_->Draw(worldTransform_, camera_);
 
 	modelTutorialFont_->Draw(worldTransform_, camera_);
+	modelTutorialFont2_->Draw(worldTransform_, camera_);
 
 	Model::PostDraw();
 

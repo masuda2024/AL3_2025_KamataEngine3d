@@ -33,10 +33,19 @@ public:
 
 	KamataEngine::Model* modelTutorialFont_;
 
+	KamataEngine::Model* modelTutorialFont2_;
+
+
 	// チュートリアルからタイトル
 	bool isFinishedTutorial() const { return finishedTutorial_; }
 
 private:
+
+	// 音声再生ハンドル
+	uint32_t soundHandle_ = 0;
+	uint32_t voiceHandle_ = 0;
+
+
 	// チュートリアルからタイトル
 	bool finishedTutorial_ = false;
 

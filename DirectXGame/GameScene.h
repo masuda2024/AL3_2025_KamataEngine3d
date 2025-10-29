@@ -18,6 +18,17 @@ private:
 	// テクスチャハンドル
 	uint32_t textureHandle_ = 0;
 
+
+
+	
+	
+	uint32_t soundJump_ = 0;
+
+	// 音声再生ハンドル
+	uint32_t soundHandle_ = 0;
+	
+
+
 	bool finished_ = false;
 
 	Grab grab_;

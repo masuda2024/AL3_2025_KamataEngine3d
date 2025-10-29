@@ -120,6 +120,16 @@ public:
 	bool isGoal() const { return isGoal_; }
 
 private:
+
+
+
+	// 音声再生ハンドル
+	uint32_t soundJump_ = 0;//////////////////////////////////////////////////////////////
+
+
+
+
+
 	// ワールド変換データ
 	KamataEngine::WorldTransform worldTransform_;
 

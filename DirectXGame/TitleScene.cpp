@@ -11,6 +11,13 @@ void TitleScene::Initialize() {
 	modelTitle_ = Model::CreateFromOBJ("Title_UI");
 	modelCredit_ = Model::CreateFromOBJ("Credit");
 	modelSkydome_ = Model::CreateFromOBJ("skydome");
+	
+	
+	
+	
+	
+	
+	
 	// カメラ初期化
 	camera_.Initialize();
 
@@ -31,12 +38,14 @@ void TitleScene::Update() {
 		if (Input::GetInstance()->PushKey(DIK_SPACE)) {
 			phase_ = Phase::kFadeOut;
 			fade_->Start(Fade::Status::FadeOut, 1.0f);
+			
 		}
 
 		// Tキーを押してチュートリアル
 		if (Input::GetInstance()->PushKey(DIK_T)) {
 			phase_ = Phase::kFadeOut;
 			fade_->Start(Fade::Status::FadeOut, 1.0f);
+			
 			nextTutorial_ = true;
 		}
 

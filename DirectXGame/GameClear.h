@@ -36,6 +36,10 @@ public:
 	bool IsFinishedClear() const { return finishedClear_; }
 
 private:
+
+	
+
+
 	// 終了フラグ
 	bool finishedClear_ = false;
 

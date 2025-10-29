@@ -23,6 +23,10 @@ void GameScene::Initialize() {
 	// マップチップフィールドの初期化
 	mapChipField_->LoadMapchipCsv("Resources/blocks.csv");
 
+
+
+	
+
 	// 自キャラ生成
 	player_ = new Player();
 
@@ -77,7 +81,8 @@ void GameScene::Initialize() {
 	
 	goal_ = new Goal();
 	goal_->SetMapChipField(mapChipField_);
-	Vector3 goalPosition = mapChipField_->GetMapChipPositionByIndex(10, 33); // ゴール置く位置 変える(14,7)
+	Vector3 goalPosition = mapChipField_->GetMapChipPositionByIndex(13, 8); // ゴール置く位置 変える(14,7)(13,8)
+	
 	Vector3 goalSize = {1.0f, 1.0f, 1.0f};
 	goal_->Initialize(modelGoal_ ,& camera_, goalPosition, goalSize);
 	
@@ -85,13 +90,13 @@ void GameScene::Initialize() {
 	// つかむ場所のマップチップ番号リスト
 	std::vector<KamataEngine::Vector2> grabTilePositions = {
 	    {12, 32}, // 1つ目
-	    {16, 28}, // 2つ目
+	    {14, 28}, // 2つ目
 	    {12, 25}, // 3つ目
 	    {13, 21}, // 4つ目
 	    {10, 20}, //  5つ目
 	    {14, 18}, //  6つ目
-	    {14, 9 }, //  7つ目
-	    {14, 14}, //  8つ目
+	    {14, 14}, //  7つ目
+	    {14, 10}, //  8つ目
 	};
 
 	// grapの初期化
@@ -147,7 +152,7 @@ void GameScene::GenerateBlocks() {
 
 void GameScene::CheckAllCollisions() {
 #pragma region 自キャラと敵キャラの当たり判定
-	AABB aabb1, aabb2;
+	AABB aabb1, aabb2, aabb3;
 
 	aabb1 = player_->GetAABB();
 
@@ -177,13 +182,11 @@ void GameScene::CheckAllCollisions() {
 
 #pragma region 自キャラとゴールの当たり判定
 
-	AABB aabb3, aabb4;
+	
 
-	aabb3 = player_->GetAABB();
+	aabb3 = goal_->GetAABB();
 
-	aabb4 = goal_->GetAABB();
-
-	if (IsCollision(aabb2, aabb4)) {
+	if (IsCollision(aabb1, aabb3)) {
 		player_->OnCollisionGoal(goal_);
 
 		goal_->GoalOnCollision(player_);
@@ -222,11 +225,13 @@ void GameScene::ChangePhase() {
 
 	case Phase::kFadeOut:
 		if (fade_->isFinished()) {
+			
 			isclear_ = true;
 		}
 		break;
 	case Phase::kFadeOut2:
 		if (fade_->isFinished()) {
+			
 			isover_ = true;
 		}
 		break;
@@ -242,13 +247,19 @@ void GameScene::Update() {
 		for (Grab* grap : grabs_) {
 			grap->Update();
 		}
+
+		// ゴールの更新
 		goal_->Update();
+
+
 		CheckAllCollisions();
 
 		// 敵に当たった
 		if (player_->isDead() == true) {
 			phase_ = Phase::kFadeOut;
 			fade_->Start(Fade::Status::FadeOut, 1.0f);
+			
+			
 			nextover_ = true;
 		}
 
@@ -256,6 +267,8 @@ void GameScene::Update() {
 		if (player_->isGoal() == true) {
 			phase_ = Phase::kFadeOut;
 			fade_->Start(Fade::Status::FadeOut, 1.0f);
+			
+			
 			nextclear_ = true;
 		}
 
@@ -421,4 +434,9 @@ GameScene::~GameScene() {
 		}
 	}
 	worldTransformBlocks_.clear();
+
+
+
+
+	
 }

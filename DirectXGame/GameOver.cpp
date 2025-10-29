@@ -29,19 +29,24 @@ void GameOver::Update() {
 	switch (phase_) {
 	case Phase::kMain:
 		if (Input::GetInstance()->PushKey(DIK_E)) {
+			
+			
 			phase_ = Phase::kFadeOut;
 			fade_->Start(Fade::Status::FadeOut, 1.0f);
+			
 		}
 		break;
 	case Phase::kFadeIn:
 		fade_->Update();
 		if (fade_->isFinished()) {
+			
 			phase_ = Phase::kMain;
 		}
 		break;
 	case Phase::kFadeOut:
 		fade_->Update();
 		if (fade_->isFinished()) {
+			
 			finishedOver_ = true;
 		}
 		break;

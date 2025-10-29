@@ -37,6 +37,9 @@ public:
 	bool IsFinishedOver() const { return finishedOver_; }
 
 private:
+
+	
+
 	// 終了フラグ
 	bool finishedOver_ = false;
 

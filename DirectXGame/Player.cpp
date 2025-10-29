@@ -16,6 +16,9 @@ void Player::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera
 	worldTransform_.translation_ = position;
 	worldTransform_.rotation_.y = std::numbers::pi_v<float> / 2.0f;
 	camera_ = camera;
+
+
+	soundJump_ = KamataEngine::Audio::GetInstance()->LoadWave("Bgm/bgm/jump.mp3");
 }
 
 void Player::Update() {
@@ -103,6 +106,14 @@ void Player::InputMove() {
 	// SPACEを離した瞬間にジャンプ
 	if ((onGround_ || isGrab_) && prevSpace_ && !spaceNow) {
 		isGrab_ = false;
+
+
+
+		// ジャンプ音再生
+		KamataEngine::Audio::GetInstance()->PlayWave(soundJump_);
+
+
+
 
 		// 真下方向に近いときは横移動を抑制
 		if (std::abs(cosValue_) < 0.1f) {

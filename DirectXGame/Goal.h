@@ -12,7 +12,7 @@ class MapChipField;
 
 class Goal {
 public:
-	void Initialize(const KamataEngine::Vector3& position, KamataEngine::Camera* camera, const KamataEngine::Vector3& size, KamataEngine::Model* model);
+	void Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, const KamataEngine::Vector3& position, const KamataEngine::Vector3& size);
 	void Update();
 	void Draw();
 

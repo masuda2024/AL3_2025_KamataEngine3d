@@ -2,7 +2,7 @@
 #include "MyMath.h"
 #include <cassert>
 
-void Goal::Initialize(const KamataEngine::Vector3& position, KamataEngine::Camera* camera, const KamataEngine::Vector3& size, KamataEngine::Model* model) {
+void Goal::Initialize(KamataEngine::Model* model, KamataEngine::Camera* camera, const KamataEngine::Vector3& position, const KamataEngine::Vector3& size) {
 
 	assert(model);
 	model_ = model;

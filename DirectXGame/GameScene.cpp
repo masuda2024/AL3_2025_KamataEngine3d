@@ -79,7 +79,7 @@ void GameScene::Initialize() {
 	goal_->SetMapChipField(mapChipField_);
 	Vector3 goalPosition = mapChipField_->GetMapChipPositionByIndex(10, 33); // ゴール置く位置 変える(14,7)
 	Vector3 goalSize = {1.0f, 1.0f, 1.0f};
-	goal_->Initialize(goalPosition, &camera_, goalSize, modelGoal_);
+	goal_->Initialize(modelGoal_ ,& camera_, goalPosition, goalSize);
 	
 
 	// つかむ場所のマップチップ番号リスト

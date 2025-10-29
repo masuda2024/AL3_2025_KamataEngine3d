@@ -2,7 +2,7 @@
 #include "MyMath.h"
 #include <cassert>
 
-void Goal::Initialize(const KamataEngine::Vector3& position,  const KamataEngine::Vector3& size, KamataEngine::Model* model) {
+void Goal::Initialize(const KamataEngine::Vector3& position, KamataEngine::Camera* camera, const KamataEngine::Vector3& size, KamataEngine::Model* model) {
 
 	assert(model);
 	model_ = model;
@@ -10,6 +10,7 @@ void Goal::Initialize(const KamataEngine::Vector3& position,  const KamataEngine
 	size_ = size;
 	worldTransform_.Initialize();
 	worldTransform_.translation_ = position_;
+	camera_ = camera;
 }
 
 void Goal::Update() {
@@ -18,7 +19,7 @@ void Goal::Update() {
 	worldTransform_.TransferMatrix();
 }
 
-void Goal::Draw(KamataEngine::Camera* camera) { model_->Draw(worldTransform_, *camera); }
+void Goal::Draw() { model_->Draw(worldTransform_, *camera_); }
 
 void Goal::GoalOnCollision(const Player* player) { (void)player; }
 

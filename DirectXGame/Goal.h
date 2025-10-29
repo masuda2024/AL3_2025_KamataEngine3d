@@ -4,11 +4,17 @@
 
 struct AABB;
 class Player;
+
+
+class MapChipField;
+
+
+
 class Goal {
 public:
-	void Initialize(const KamataEngine::Vector3& position,const KamataEngine::Vector3& size, KamataEngine::Model* model);
+	void Initialize(const KamataEngine::Vector3& position, KamataEngine::Camera* camera, const KamataEngine::Vector3& size, KamataEngine::Model* model);
 	void Update();
-	void Draw(KamataEngine::Camera* camera);
+	void Draw();
 
 	// AABB 取得
 	AABB GetAABB() const;
@@ -19,7 +25,7 @@ public:
 	// 衝突応答
 	void GoalOnCollision(const Player* player);
 
-	
+	void SetMapChipField(MapChipField* mapChipField) { mapChipField_ = mapChipField; }
 	
 private:
 	
@@ -27,6 +33,12 @@ private:
 	KamataEngine::Vector3 size_;
 	KamataEngine::Model* model_ = nullptr;
 	KamataEngine::WorldTransform worldTransform_;
+	
+
+
+	MapChipField* mapChipField_ = nullptr;
+	KamataEngine::Camera* camera_ = nullptr;
+
 
 	bool reached_ = false;
 };

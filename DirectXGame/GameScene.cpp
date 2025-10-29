@@ -242,7 +242,7 @@ void GameScene::Update() {
 		for (Grab* grap : grabs_) {
 			grap->Update();
 		}
-
+		goal_->Update();
 		CheckAllCollisions();
 
 		// 敵に当たった
@@ -319,6 +319,11 @@ void GameScene::Update() {
 			worldTransformBlock->TransferMatrix();
 		}
 	}
+
+
+	
+
+
 
 #ifdef _DEBUG
 	if (Input::GetInstance()->TriggerKey(DIK_0)) {

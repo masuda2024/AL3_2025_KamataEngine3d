@@ -11,7 +11,7 @@
 using namespace KamataEngine;
 using namespace MathUtility;
 
-
+#pragma region プレイヤーの初期化・更新・描画
 
 void Player::Initialize(Model* model,Model* modelPlayerAttack,Camera* camera, KamataEngine::Vector3& position) 
 {
@@ -22,6 +22,14 @@ void Player::Initialize(Model* model,Model* modelPlayerAttack,Camera* camera, Ka
 
 	modelPlayerAttack_ = modelPlayerAttack;
 	// textureHandle_ = textureHandle;
+	
+	// 攻撃ギミック用ワールド変換初期化
+	worldTransformPlayerAttack_.Initialize();
+	worldTransformPlayerAttack_.translation_ = worldTransform_.translation_;
+	worldTransformPlayerAttack_.rotation_ = worldTransform_.rotation_;
+
+
+
 
 	worldTransform_.translation_ = position;
 
@@ -32,39 +40,11 @@ void Player::Initialize(Model* model,Model* modelPlayerAttack,Camera* camera, Ka
 	worldTransform_.Initialize();
 	
 	
-	// 攻撃ギミック用ワールド変換初期化
-	worldTransformPlayerAttack_.Initialize();
-	worldTransformPlayerAttack_.translation_ = worldTransform_.translation_;
-	worldTransformPlayerAttack_.rotation_ = worldTransform_.rotation_;
-
+	
 	
 
 
-	#pragma region 通常行動と攻撃行動
-
-	if (behaviorRequest_ != Behavior::kUnknown)
-	{
-		// 振る舞いを変更する
-		behavior_ = behaviorRequest_;
-		// 各振る舞いごとの初期化を実行
-		switch (behavior_)
-		{
-		case Player::Behavior::kRoot:
-
-			BehaviorRootInitialize();
-
-			break;
-		case Player::Behavior::kAttack:
-
-			BehaviorAttackInitialize();
-
-			break;
-		}
-		// 振る舞いリクエストをリセット
-		behaviorRequest_ = Behavior::kUnknown;
-	}
-
-    #pragma endregion
+	
 
 
 
@@ -76,11 +56,10 @@ void Player::Initialize(Model* model,Model* modelPlayerAttack,Camera* camera, Ka
 }
 
 
-
 void Player::Update() 
 {
 	
-	
+	/**/
 	switch (behavior_) 
 	{
 	// 通常行動
@@ -97,7 +76,7 @@ void Player::Update()
 		break;
 	}
 	// 振る舞いリクエストをリセット
-	behaviorRequest_ = Behavior::kUnknown;
+	//behaviorRequest_ = Behavior::kUnknown;
 
 
 
@@ -105,24 +84,24 @@ void Player::Update()
 	//InputMove();
 	// 2.移動量を加速して衝突判定する
 	// 衝突情報を初期化
-	CollisionMapInfo collisionMapInfo;
+	//CollisionMapInfo collisionMapInfo;
 	// 移動量に速度の値をコピー
-	collisionMapInfo.move = velocity_;
+	//collisionMapInfo.move = velocity_;
 	// マップ衝突チェック
-	CheckMapCollision(collisionMapInfo);
+	//CheckMapCollision(collisionMapInfo);
 	// 3.判定結果を反映して移動させる
-	CheckMapMove(collisionMapInfo);
+	//CheckMapMove(collisionMapInfo);
 	// 4.天井に接触している場合の処理
-	CheckMapCeiling(collisionMapInfo);
+	//CheckMapCeiling(collisionMapInfo);
 	// 5.壁に接触している場合の処理
-	CheckMapWall(collisionMapInfo);
+	//CheckMapWall(collisionMapInfo);
 	// 6.接地状態の切り替え
-	CheckMapLanding(collisionMapInfo);
-
-	
-
+	//CheckMapLanding(collisionMapInfo);
 	// 7.旋回制御
-	AnimateTurn();
+	//AnimateTurn();
+
+
+
 
 	
 	// アフィン変換行列
@@ -131,21 +110,46 @@ void Player::Update()
 
 
 
+	#pragma region 通常行動と攻撃行動
 
+	if (behaviorRequest_ != Behavior::kUnknown)
+	{
+		// 振る舞いを変更する
+		behavior_ = behaviorRequest_;
+		// 各振る舞いごとの初期化を実行
+		switch (behavior_) 
+		{
+		case Player::Behavior::kRoot:
 
+			BehaviorRootInitialize();
 
+			break;
+		case Player::Behavior::kAttack:
 
+			BehaviorAttackInitialize();
+
+			break;
+		}
+		// 振る舞いリクエストをリセット
+		behaviorRequest_ = Behavior::kUnknown;
+	}
+	
+	switch (behavior_)
+	{
+	case Behavior::kRoot:
+		break;
+	default:
+		break;
+	case Behavior::kAttack:
+		BehaviorAttackUpdate();
+		break;
+	}
+#pragma endregion
 
 	
-
-
-
-
-
-
-
-
 }
+
+//void Player::UpdateWorldTrandform(WorldTransform* worldTransformPlayerAttack_);
 
 
 
@@ -170,7 +174,7 @@ void Player::Draw()
 		case Player::AttackPhase::kReservoir:
 			
 			default:
-			
+			//予備動作中は攻撃モデルを表示しない
 			break;
 		case Player::AttackPhase::kRush:
 			
@@ -194,19 +198,19 @@ void Player::Draw()
 
 }
 
+#pragma endregion
+
+
+
+
 
 #pragma region プレイヤーの挙動
 
 // 1.移動入力
+
 void Player::InputMove()
 {
-
-	// 攻撃キーを押したら
-	if (Input::GetInstance()->PushKey(DIK_E))
-	{
-		// 攻撃ビヘイビアをリクエスト
-		behaviorRequest_ = Behavior::kAttack;
-	}
+	
 	// 左右移動操作
 	if (onGround_) 
 	{
@@ -320,7 +324,9 @@ void Player::InputMove()
 	}
 }
 
+
 // 2.マップ衝突チェック
+
 void Player::CheckMapCollision(CollisionMapInfo& info) 
 {
 	CheckMapCollisionUP(info);
@@ -564,14 +570,22 @@ void Player::CheckMapCollisionLeft(CollisionMapInfo& info)
 	}
 }
 
+
+
+
 // 3.判定結果を反映して移動させる
+
 void Player::CheckMapMove(const CollisionMapInfo& info) 
 {
 	// 移動
 	worldTransform_.translation_ += info.move;
 }
 
+
+
+
 // 4.天井に接触している場合の処理
+
 void Player::CheckMapCeiling(const CollisionMapInfo& info) 
 {
 	if (info.ceiling)
@@ -580,6 +594,9 @@ void Player::CheckMapCeiling(const CollisionMapInfo& info)
 		velocity_.y = 0;
 	}
 }
+
+
+
 
 // 5.壁に接触している場合の処理
 void Player::CheckMapWall(CollisionMapInfo& info) 
@@ -590,6 +607,9 @@ void Player::CheckMapWall(CollisionMapInfo& info)
 		velocity_.x *= (1.0f - kAttenuationWall);
 	}
 }
+
+
+
 
 // 6.接地状態の切り替え処理
 void Player::CheckMapLanding(const CollisionMapInfo& info) 
@@ -656,6 +676,8 @@ void Player::CheckMapLanding(const CollisionMapInfo& info)
 	}
 }
 
+
+
 // 7.旋回制御
 void Player::AnimateTurn() 
 {
@@ -674,8 +696,6 @@ void Player::AnimateTurn()
 }
 
 #pragma endregion
-
-
 
 
 KamataEngine::Vector3 Player::CornerPosition(const KamataEngine::Vector3& center, Corner corner)
@@ -735,6 +755,10 @@ void Player::OnCollition(const Enemy* enemy)
 
 
 
+
+
+
+
 #pragma region 通常・攻撃行動の初期化と更新
 // 通常行動初期化
 void Player::BehaviorRootInitialize() {}
@@ -753,23 +777,20 @@ void Player::BehaviorRootUpdate()
 	CheckMapCollision(collisionMapInfo);
 	// 判定結果を反映して移動させる
 	worldTransform_.translation_ += collisionMapInfo.move;
-	// 壁に接触している場合の処理
+	// 天井接触による落下開始
 	if (collisionMapInfo.ceiling)
 	{
 		velocity_.y = 0;
 	}
-	// 接地状態の切り替え
+	// 接地状態による減速
 	if (collisionMapInfo.hitwall)
 	{
 		velocity_.x *= (1.0f - kAttenuationWall);
 	}
-
-
-
-
-
-
-
+	//設置判定
+	CheckMapLanding(collisionMapInfo);
+	//旋回制御
+	AnimateTurn();
 	//攻撃キーを押したら
 	if (Input::GetInstance()->PushKey(DIK_E))
 	{
@@ -779,16 +800,25 @@ void Player::BehaviorRootUpdate()
 }
 
 
+
+
+
+
 // 攻撃行動初期化
 void Player::BehaviorAttackInitialize()
 { 
+	//パラメーターの初期化
 	attackParameter_ = 0; 
+	velocity_ = {};
+	//溜めフェーズから始める
+	attackPhase_ = AttackPhase::kReservoir;
 }
 
 // 攻撃行動更新
 void Player::BehaviorAttackUpdate() 
 {
-
+	const Vector3 kAttackVelocity = {0.8f, 0.0f, 0.0f};
+	Vector3 velocity{};
 	//予備動作
 	attackParameter_++;
 
@@ -800,8 +830,9 @@ void Player::BehaviorAttackUpdate()
 
 
 	// 攻撃動作用の速度
-	Vector3 velocity{};
+	//Vector3 velocity{};
 	Vector3 attackVelocity{};
+	
 	//攻撃フェーズごとの更新処理
 	switch (attackPhase_)
 	{
@@ -809,18 +840,18 @@ void Player::BehaviorAttackUpdate()
 	case Player::AttackPhase::kReservoir:
 		{
 		default: 
-		{
-			float t = static_cast<float>(attackParameter_) / kReservoirTime;
-			worldTransform_.scale_.z = EaseInOut(1.0f, 0.3f, t);
-			worldTransform_.scale_.y = EaseInOut(1.0f, 1.6f, t);
-			// 前進動作へ移行
-			if (attackParameter_ >= 1.0f)
 			{
-				attackPhase_ = AttackPhase::kRush;
-				attackParameter_ = 0; // カウンターをリセット
+				float t = static_cast<float>(attackParameter_) / kReservoirTime;
+				worldTransform_.scale_.z = EaseInOut(1.0f, 0.3f, t);
+				worldTransform_.scale_.y = EaseInOut(1.0f, 1.6f, t);
+				// 前進動作へ移行
+				if (attackParameter_ >= kReservoirTime)
+				{
+					attackPhase_ = AttackPhase::kRush;
+					attackParameter_ = 0; // カウンターをリセット
+				}
+				break;
 			}
-			break;
-		}
 
 		break;
 		}
@@ -828,7 +859,7 @@ void Player::BehaviorAttackUpdate()
 		//突進
 	case Player::AttackPhase::kRush:
 		{
-				if (lrDirection_ != LRDirection::kLeft) 
+				if (lrDirection_ == LRDirection::kLeft) 
 				{
 					velocity = +attackVelocity;
 				} else
@@ -839,13 +870,19 @@ void Player::BehaviorAttackUpdate()
 				worldTransform_.scale_.z = EaseInOut(0.3f, 1.3f, t);
 				worldTransform_.scale_.y = EaseInOut(1.6f, 0.7f, t);
 				// 余韻動作へ移行
-				attackPhase_ = AttackPhase::kLingering;
+				if (attackParameter_ >= kRushTime)
+				{
+			        attackPhase_ = AttackPhase::kLingering;
+			        //パラメーターをリセット
+					attackParameter_ = 0;
+				}
 				break;
 		}
 
 		//余韻
 	case Player::AttackPhase::kLingering:
 		{
+		    velocity = {};
 			float t = static_cast<float>(attackParameter_) / kLingeringTime;
 			worldTransform_.scale_.z = EaseInOut(1.3f, 1.0f, t);
 			worldTransform_.scale_.y = EaseInOut(0.7f, 1.0f, t);
@@ -858,10 +895,21 @@ void Player::BehaviorAttackUpdate()
 		}
 	}
 
-	//衝突情報を初期化
+	
 	//CollisionMapInfo.move = velocity;
-
-
+	
+	// 衝突情報を初期化
+	CollisionMapInfo collisionMapInfo = {};
+	collisionMapInfo.move = velocity;
+	collisionMapInfo.langing = false;
+	collisionMapInfo.hitwall = false;
+	//マップ衝突チェック
+	CheckMapCollision(collisionMapInfo);
+	//移動
+	worldTransform_.translation_ += collisionMapInfo.move;
+	AnimateTurn();
+	worldTransformPlayerAttack_.translation_ = worldTransform_.translation_;
+	worldTransformPlayerAttack_.rotation_ = worldTransform_.rotation_;
 }
 
 #pragma endregion

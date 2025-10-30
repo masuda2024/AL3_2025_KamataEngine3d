@@ -146,9 +146,6 @@ public:
 		kLingering,    // 余韻
 	};
 
-	Behavior behavior_ = Behavior::kRoot;
-
-
 	// 次の振る舞いリクエスト
 	Behavior behaviorRequest_ = Behavior::kUnknown;
 	// 攻撃ギミックの経過時間カウンター
@@ -180,11 +177,14 @@ public:
 	//前進動作の時間
 	static inline const uint32_t kRushTime = 5;
 	//余韻動作の時間
-	static inline const uint32_t kLingeringTime = 8;
+	static inline const uint32_t kLingeringTime = 12;
 
 
+	KamataEngine::Model* modelPlayerAttack_ = nullptr;
+	KamataEngine::WorldTransform worldTransformPlayerAttack_;
+	Behavior behavior_ = Behavior::kRoot;
 
-
+	//void UpdateWorldTrandform(KamataEngine::WorldTransform* worldTransformPlayerAttack_);
 
 	void InputMove();
 
@@ -233,9 +233,6 @@ private:
 	KamataEngine::Vector3 velocity_ = {};
 
 
-	KamataEngine::Model* modelPlayerAttack_ = nullptr;
-	KamataEngine::WorldTransform worldTransformPlayerAttack_;
 	
-
 
 };
